@@ -20,11 +20,14 @@ namespace KanbanBackend.Application.Tags.Commands.CreateTag
 
         public async Task<TagDto> Handle(CreateTagCommand request, CancellationToken ct)
         {
+            var id = await _tags.GetMaxId();
             var tag = new Tag
             {
+                Id = ++id,
                 BoardId = request.BoardId,
                 Name = request.Name,
-                ColorHex = request.Color
+                ColorHex = request.Color,
+                CreatedAt = DateTime.UtcNow
             };
 
             await _tags.AddAsync(tag);

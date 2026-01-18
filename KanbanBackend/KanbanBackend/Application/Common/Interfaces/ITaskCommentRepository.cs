@@ -12,5 +12,7 @@ namespace KanbanBackend.Application.Common.Interfaces
 
         System.Threading.Tasks.Task DeleteAsync(TaskComment comment);
         System.Threading.Tasks.Task DeleteForTaskAsync(int taskId);
+        System.Threading.Tasks.Task<int> GetMaxId();
+
     }
 }

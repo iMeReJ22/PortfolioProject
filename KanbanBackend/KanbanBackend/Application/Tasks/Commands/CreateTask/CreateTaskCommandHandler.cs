@@ -21,8 +21,11 @@ namespace KanbanBackend.Application.Tasks.Commands.CreateTask
         {
             var orderIndex = await _tasks.GetNextOrderIndexAsync(request.ColumnId);
 
+            var id = await _tasks.GetMaxId();
+
             var task = new Domain.Entities.Task
             {
+                Id = ++id,
                 ColumnId = request.ColumnId,
                 Title = request.Title,
                 Description = request.Description,

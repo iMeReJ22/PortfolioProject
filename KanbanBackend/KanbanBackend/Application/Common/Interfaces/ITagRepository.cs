@@ -15,5 +15,7 @@ namespace KanbanBackend.Application.Common.Interfaces
         System.Threading.Tasks.Task RemoveTagFromTaskAsync(int taskId, int tagId);
         System.Threading.Tasks.Task RemoveAllTagsFromTaskAsync(int taskId);
         System.Threading.Tasks.Task RemoveAllTagsForBoardAsync(int boardId);
+        System.Threading.Tasks.Task<int> GetMaxId();
+
     }
 }

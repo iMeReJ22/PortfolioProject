@@ -13,5 +13,7 @@ namespace KanbanBackend.Application.Common.Interfaces
 
         System.Threading.Tasks.Task DeleteAsync(Column column);
         System.Threading.Tasks.Task ReorderAsync(int boardId, IReadOnlyCollection<Column> columns);
+        System.Threading.Tasks.Task<int> GetMaxId();
+
     }
 }

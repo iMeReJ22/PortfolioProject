@@ -81,5 +81,9 @@ namespace KanbanBackend.Infrastructure.Persistance.Repositories
             _db.Tags.Update(tag);
             await _db.SaveChangesAsync();
         }
+        public async Task<int> GetMaxId()
+        {
+            return await _db.Tags.MaxAsync(t => (int?)t.Id) ?? 0;
+        }
     }
 }

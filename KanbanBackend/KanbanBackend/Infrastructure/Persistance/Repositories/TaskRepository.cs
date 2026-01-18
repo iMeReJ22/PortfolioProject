@@ -45,6 +45,8 @@ namespace KanbanBackend.Infrastructure.Persistance.Repositories
         {
             return await _db.Tasks
                 .Where(t => t.Column.BoardId == boardId)
+                .OrderBy(t => t.Column.BoardId)
+                .ThenBy(t => t.OrderIndex)
                 .ToListAsync();
         }
 
@@ -52,6 +54,7 @@ namespace KanbanBackend.Infrastructure.Persistance.Repositories
         {
             return await _db.Tasks
                 .Where(t => t.ColumnId == column)
+                .OrderBy(t => t.OrderIndex)
                 .ToListAsync();
         }
 
@@ -59,9 +62,7 @@ namespace KanbanBackend.Infrastructure.Persistance.Repositories
         {
             var maxOrder = await _db.Tasks
                 .Where(t => t.ColumnId == columnId)
-                .Select(t => t.OrderIndex)
-                .DefaultIfEmpty(-1)
-                .MaxAsync();
+                .MaxAsync(t => (int?)t.OrderIndex) ?? 0;
 
             return maxOrder + 1;
         }
@@ -86,7 +87,7 @@ namespace KanbanBackend.Infrastructure.Persistance.Repositories
             if(task.ColumnId != newColumnId)
                 task.ColumnId = newColumnId;
             
-            newColumnTasks.Insert(newOrderIndex, task);
+            newColumnTasks.Insert(newOrderIndex-1, task);
             ReorderTasks(newColumnTasks);
 
             await _db.SaveChangesAsync();
@@ -124,7 +125,7 @@ namespace KanbanBackend.Infrastructure.Persistance.Repositories
         {
             for (int i = 0; i < tasks.Count; i++)
             {
-                tasks[i].OrderIndex = i;
+                tasks[i].OrderIndex = i+1;
             }
         }
 
@@ -132,6 +133,11 @@ namespace KanbanBackend.Infrastructure.Persistance.Repositories
         {
             _db.Tasks.Update(task);
             await _db.SaveChangesAsync();
+        }
+
+        public async Task<int> GetMaxId()
+        {
+            return await _db.Tasks.MaxAsync(t => (int?)t.Id) ?? 0;
         }
     }
 }

@@ -8,11 +8,13 @@ using KanbanBackend.Application.Boards.Queries.GetBoardsForUser;
 using KanbanBackend.Application.Boards.Queries.GetBoardMembers;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 
 namespace KanbanBackend.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    //[Authorize]
     public class BoardsController : Controller
     {
         private readonly IMediator _mediator;

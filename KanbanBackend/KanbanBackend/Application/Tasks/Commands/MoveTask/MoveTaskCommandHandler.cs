@@ -20,10 +20,7 @@ namespace KanbanBackend.Application.Tasks.Commands.MoveTask
             if (task == null)
                 throw new NotFoundException("Board", request.TaskId);
 
-            task.ColumnId = request.TargetColumnId;
-            task.OrderIndex = request.NewOrderIndex;
-
-            await _tasks.UpdateAsync(task);
+            await _tasks.MoveAsync(task, request.TargetColumnId, request.NewOrderIndex);
 
             return Unit.Value;
         }

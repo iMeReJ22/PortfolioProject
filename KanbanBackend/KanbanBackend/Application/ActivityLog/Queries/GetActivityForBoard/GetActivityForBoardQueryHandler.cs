@@ -3,14 +3,14 @@ using MediatR;
 
 namespace KanbanBackend.Application.ActivityLog.Queries.GetActivityForBoard
 {
-    public class GetActivityForBoardHandler : IRequestHandler<GetActivityForBoardCommand, Unit>
+    public class GetActivityForBoardQueryHandler : IRequestHandler<GetActivityForBoardQuery, Unit>
     {
         private readonly IActivityLogRepository _logs;
-        public GetActivityForBoardHandler(IActivityLogRepository logs)
+        public GetActivityForBoardQueryHandler(IActivityLogRepository logs)
         {
             _logs = logs;
         }
-        public async Task<Unit> Handle(GetActivityForBoardCommand request, CancellationToken cancellationToken)
+        public async Task<Unit> Handle(GetActivityForBoardQuery request, CancellationToken cancellationToken)
         {
             await _logs.GetForBoardAsync(request.boardId);
             return Unit.Value;

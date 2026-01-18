@@ -48,5 +48,9 @@ namespace KanbanBackend.Infrastructure.Persistance.Repositories
             _db.TaskComments.Update(comment);
             await _db.SaveChangesAsync();
         }
+        public async Task<int> GetMaxId()
+        {
+            return await _db.TaskComments.MaxAsync(c => (int?)c.Id) ?? 0;
+        }
     }
 }

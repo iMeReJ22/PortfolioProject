@@ -16,5 +16,7 @@
         Task ReorderAsync(int columnId, IReadOnlyCollection<Domain.Entities.Task> tasks);
         Task AssignTagAsync(int taskId, int tagId);
         Task RemoveTagAsync(int taskId, int tagId);
+        System.Threading.Tasks.Task<int> GetMaxId();
+
     }
 }

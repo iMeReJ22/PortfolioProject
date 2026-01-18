@@ -10,7 +10,6 @@
     <Folder Include="API\Filters\" />
     <Folder Include="API\Extensions\" />
     <Folder Include="Application\ActivityLog\Queries\GetActivityForTask\" />
-    <Folder Include="Application\Users\Commands\DeleteUser\" />
     <Folder Include="Infrastructure\Persistance\Migrations\" />
   </ItemGroup>
 
@@ -26,6 +25,7 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Microsoft.IdentityModel.Tokens" Version="8.15.0" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="10.1.0" />
     <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.15.0" />
   </ItemGroup>
 

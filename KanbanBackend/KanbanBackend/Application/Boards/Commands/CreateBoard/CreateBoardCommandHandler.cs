@@ -20,15 +20,19 @@ namespace KanbanBackend.Application.Boards.Commands.CreateBoard
 
         public async Task<BoardDto> Handle(CreateBoardCommand request, CancellationToken ct)
         {
+            var id = await _boards.GetMaxId();
             var board = new Board
             {
+                Id = ++id,
                 Name = request.Name,
                 Description = request.Description,
                 CreatedAt = DateTime.UtcNow,
                 OwnerId = request.OwnerId
             };
-
+            
             await _boards.AddAsync(board);
+            
+            await _boards.AddMemberAsync(new BoardMember { BoardId = board.Id, UserId = board.OwnerId, Role = "Owner" });
 
             return _mapper.Map<BoardDto>(board);
         }

@@ -25,6 +25,13 @@ namespace KanbanBackend.Application.Boards.Queries.GetBoardMembers
 
             var userDtos = memberDtos.Select(s => s.User).ToList();
 
+            foreach (var userDto in userDtos)
+            {
+                var match = memberDtos.Find(m => m.UserId == userDto.Id);
+                if(match != null)
+                    userDto.Role = match.Role;
+            }
+
             return new BoardMembersDto
             {
                 BoardId = request.BoardId,

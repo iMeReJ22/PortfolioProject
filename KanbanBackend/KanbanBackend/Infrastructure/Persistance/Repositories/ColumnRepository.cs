@@ -30,7 +30,9 @@ namespace KanbanBackend.Infrastructure.Persistance.Repositories
 
         public async Task<IReadOnlyCollection<Column>> GetForBoardAsync(int boardId)
         {
-            return await _db.Columns.Where(c => c.BoardId == boardId)
+            return await _db.Columns
+                .Where(c => c.BoardId == boardId)
+                .OrderBy(c => c.OrderIndex)
                 .ToListAsync();
         }
 
@@ -38,9 +40,7 @@ namespace KanbanBackend.Infrastructure.Persistance.Repositories
         {
             var maxOrder = await _db.Columns
                 .Where(c => c.BoardId == boardId)
-                .Select(c => c.OrderIndex)
-                .DefaultIfEmpty(-1)
-                .MaxAsync();
+                .MaxAsync(c => (int?)c.OrderIndex) ?? -1;
             return maxOrder + 1;
         }
 
@@ -64,6 +64,10 @@ namespace KanbanBackend.Infrastructure.Persistance.Repositories
         {
             _db.Columns.Update(column);
             await _db.SaveChangesAsync();
+        }
+        public async Task<int> GetMaxId()
+        {
+            return await _db.Columns.MaxAsync(c => (int?)c.Id) ?? 0;
         }
     }
 }

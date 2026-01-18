@@ -14,6 +14,7 @@ namespace KanbanBackend.Application.Common.Interfaces
         System.Threading.Tasks.Task AddRangeAsync(IEnumerable<Domain.Entities.ActivityLog> logs);
 
         System.Threading.Tasks.Task DeleteForBoardAsync(int boardId);
+        System.Threading.Tasks.Task<int> GetMaxId();
 
     }
 }

@@ -20,8 +20,10 @@ namespace KanbanBackend.Application.Comments.Commands.CreateComment
 
         public async Task<TaskCommentDto> Handle(CreateCommentCommand request, CancellationToken ct)
         {
+            var id = await _comments.GetMaxId();
             var comment = new TaskComment
             {
+                Id = ++id,
                 TaskId = request.TaskId,
                 AuthorId = request.AuthorId,
                 Content = request.Content,

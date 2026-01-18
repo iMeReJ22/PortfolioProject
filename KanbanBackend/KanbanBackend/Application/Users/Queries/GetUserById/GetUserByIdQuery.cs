@@ -1,8 +1,9 @@
-﻿using MediatR;
+﻿using KanbanBackend.Application.Common.DTOs;
+using MediatR;
 
 namespace KanbanBackend.Application.Users.Queries.GetUserById
 {
-    public record GetUserByIdQuery(int userId) : IRequest<Unit>
+    public record GetUserByIdQuery(int userId) : IRequest<UserDto>
     {
     }
 }

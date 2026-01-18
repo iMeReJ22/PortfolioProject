@@ -2,9 +2,9 @@
 
 namespace KanbanBackend.Application.ActivityLog.Queries.GetActivityForBoard
 {
-    public class GetActivityForBoardValidator : AbstractValidator<GetActivityForBoardCommand>
+    public class GetActivityForBoardQueryValidator : AbstractValidator<GetActivityForBoardQuery>
     {
-        public GetActivityForBoardValidator()
+        public GetActivityForBoardQueryValidator()
         {
             RuleFor(x => x.boardId)
                 .GreaterThan(0);

@@ -1,17 +1,19 @@
-﻿using KanbanBackend.Application.Users.Commands.CreateUser;
+﻿using KanbanBackend.Application.Comments.Commands.DeleteComment;
+using KanbanBackend.Application.Users.Commands.CreateUser;
+using KanbanBackend.Application.Users.Commands.DeleteUser;
 using KanbanBackend.Application.Users.Commands.Login;
 using KanbanBackend.Application.Users.Commands.UpdateUser;
-using KanbanBackend.Application.Users.Queries.GetUsers;
 using KanbanBackend.Application.Users.Queries.GetUserById;
+using KanbanBackend.Application.Users.Queries.GetUsers;
 using MediatR;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 
 namespace KanbanBackend.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
+    //[Authorize]
     public class UsersController : Controller
     {
         private readonly IMediator _mediator;
@@ -57,6 +59,13 @@ namespace KanbanBackend.API.Controllers
             if (id != command.Id) return BadRequest();
             var updated = await _mediator.Send(command);
             return Ok(updated);
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteUser(int id)
+        {
+            await _mediator.Send(new DeleteUserCommand(id));
+            return NoContent();
         }
     }
 }

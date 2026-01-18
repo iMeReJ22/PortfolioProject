@@ -62,6 +62,7 @@ namespace KanbanBackend.Infrastructure.Persistance.Repositories
         public async Task<IReadOnlyCollection<BoardMember>> GetMembersAsync(int boardId)
         {
             return await _db.BoardMembers
+                .Include(bm => bm.User)
                 .Where(bm => bm.BoardId == boardId)
                 .ToListAsync();
         }
@@ -84,6 +85,10 @@ namespace KanbanBackend.Infrastructure.Persistance.Repositories
                 .Where(bm => bm.UserId == userId &&  bm.BoardId == boardId)
                 .FirstOrDefaultAsync();
             return boardMember != null;
+        }
+        public async Task<int> GetMaxId()
+        {
+            return await _db.Boards.MaxAsync(b => (int?)b.Id) ?? 0;
         }
     }
 }

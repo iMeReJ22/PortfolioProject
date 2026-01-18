@@ -26,8 +26,10 @@ namespace KanbanBackend.Application.Users.Commands.CreateUser
 
         public async Task<UserDto> Handle(CreateUserCommand request, CancellationToken ct)
         {
+            var id = await _users.GetMaxId();
             var user = new User
             {
+                Id = ++id,
                 Email = request.Email,
                 DisplayName = request.DisplayName,
                 PasswordHash = _hasher.Hash(request.Password),

@@ -1,4 +1,6 @@
-﻿namespace KanbanBackend.Application.Columns.Commands.UpdateColumn
+﻿using FluentValidation;
+
+namespace KanbanBackend.Application.Columns.Commands.UpdateColumn
 {
     public class UpdateColumnCommandValidator : AbstractValidator<UpdateColumnCommand>
     {

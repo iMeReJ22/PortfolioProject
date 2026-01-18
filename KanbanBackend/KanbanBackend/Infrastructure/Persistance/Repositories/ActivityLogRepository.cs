@@ -72,5 +72,9 @@ namespace KanbanBackend.Infrastructure.Persistance.Repositories
                 .ToListAsync();
             return logs;
         }
+        public async Task<int> GetMaxId()
+        {
+            return await _db.ActivityLogs.MaxAsync(x => (int?)x.Id) ?? 0;
+        }
     }
 }

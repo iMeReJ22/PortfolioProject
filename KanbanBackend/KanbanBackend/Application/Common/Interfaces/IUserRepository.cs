@@ -12,5 +12,7 @@ namespace KanbanBackend.Application.Common.Interfaces
         System.Threading.Tasks.Task AddAsync(User user);
         System.Threading.Tasks.Task UpdateAsync(User user);
         System.Threading.Tasks.Task<ICollection<User>> GetUsers();
+        Task<int> GetMaxId();
+        System.Threading.Tasks.Task RemoveAsync(User user);
     }
 }

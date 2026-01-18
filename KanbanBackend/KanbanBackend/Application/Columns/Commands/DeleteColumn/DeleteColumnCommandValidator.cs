@@ -1,4 +1,6 @@
-﻿namespace KanbanBackend.Application.Columns.Commands.DeleteColumn
+﻿using FluentValidation;
+
+namespace KanbanBackend.Application.Columns.Commands.DeleteColumn
 {
     public class DeleteColumnCommandValidator : AbstractValidator<DeleteColumnCommand>
     {

@@ -40,9 +40,20 @@ namespace KanbanBackend.Infrastructure.Persistance.Repositories
             return await _db.Users.FirstOrDefaultAsync(u => u.Id == id);
         }
 
+        public async Task<int> GetMaxId()
+        {
+            return await _db.Users.MaxAsync(u => (int?)u.Id) ?? 0;
+        }
+
         public async System.Threading.Tasks.Task<ICollection<User>> GetUsers()
         {
             return await _db.Users.ToListAsync();
+        }
+
+        public async System.Threading.Tasks.Task RemoveAsync(User user)
+        {
+            _db.Users.Remove(user);
+            await _db.SaveChangesAsync();
         }
 
         public async System.Threading.Tasks.Task UpdateAsync(User user)

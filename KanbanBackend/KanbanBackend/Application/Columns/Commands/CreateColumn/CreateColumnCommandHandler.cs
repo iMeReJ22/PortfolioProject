@@ -22,9 +22,10 @@ namespace KanbanBackend.Application.Columns.Commands.CreateColumn
         public async Task<ColumnDto> Handle(CreateColumnCommand request, CancellationToken ct)
         {
             var orderIndex = await _columns.GetNextOrderIndexAsync(request.BoardId);
-
+            var id = await _columns.GetMaxId();
             var column = new Column
             {
+                Id = ++id,
                 BoardId = request.BoardId,
                 Name = request.Name,
                 OrderIndex = orderIndex
