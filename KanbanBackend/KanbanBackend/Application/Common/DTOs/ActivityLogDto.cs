@@ -8,6 +8,7 @@
         public DateTime CreatedAt { get; set; }
         public int BoardId { get; set; }
         public int? UserId { get; set; }
+        public int? ActivityAuthorId { get; set; }
         public int? TagId { get; set; }
         public int? ColumnId { get; set; }
         public int? TaskId { get; set; }

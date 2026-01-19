@@ -36,7 +36,7 @@ namespace KanbanBackend.Application.Columns.Commands.CreateColumn
 
             await _columns.AddAsync(column);
 
-            await _logger.AddLogColumnAsync("Columnt Created", "created", id);
+            await _logger.AddLogColumnAsync("Column Created", "created", id);
 
             return _mapper.Map<ColumnDto>(column);
         }

@@ -16,7 +16,7 @@ namespace KanbanBackend.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    //[Authorize]
+    [Authorize]
     public class TasksController : Controller
     {
         private readonly IMediator _mediator;

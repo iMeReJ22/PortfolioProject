@@ -10,7 +10,7 @@ namespace KanbanBackend.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    //[Authorize]
+    [Authorize]
     public class TagsController : Controller
     {
         private readonly IMediator _mediator;

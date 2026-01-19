@@ -68,7 +68,8 @@ namespace KanbanBackend.Infrastructure.Persistance.Repositories
                 .Include(u => u.BoardMembers)
                 .ThenInclude(bm => bm.Board)
                 .Include(u => u.Boards)
-                .Include(u => u.ActivityLogs)
+                .Include(u => u.ActivityLogMembers)
+                .Include(u => u.ActivityLogActivityAuthors)
                 .FirstOrDefaultAsync(u => u.Id == id);
         }
     }

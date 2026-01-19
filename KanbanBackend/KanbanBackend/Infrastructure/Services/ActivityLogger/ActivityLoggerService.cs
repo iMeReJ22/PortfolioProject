@@ -1,13 +1,14 @@
-﻿using Async = System.Threading.Tasks;
-using KanbanBackend.Application.Common.Interfaces;
+﻿using KanbanBackend.Application.Common.Interfaces;
 using KanbanBackend.Domain.Entities;
 using KanbanBackend.Domain.Exceptions;
+using System.Security.Claims;
+using Async = System.Threading.Tasks;
 
 namespace KanbanBackend.Infrastructure.Services.ActivityLogger
 {
     public class ActivityLoggerService : IActivityLoggerService
     {
-
+        private readonly IHttpContextAccessor _httpContext;
         private readonly IColumnRepository _columns;
         private readonly ITagRepository _tags;
         private readonly ITaskCommentRepository _comments;
@@ -20,7 +21,8 @@ namespace KanbanBackend.Infrastructure.Services.ActivityLogger
             ITaskCommentRepository comments,
             ITaskRepository tasks,
             IActivityLogRepository logs,
-            IBoardRepository boards
+            IBoardRepository boards,
+            IHttpContextAccessor httpContext
             )
         {
             _columns = columns;
@@ -29,16 +31,23 @@ namespace KanbanBackend.Infrastructure.Services.ActivityLogger
             _tasks = tasks;
             _logs = logs;
             _boards = boards;
+            _httpContext = httpContext;
         }
         private async Async.Task<ActivityLog> PrepareLog(string name, int boardId)
         {
+            var stringId = _httpContext.HttpContext?.User?.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (stringId == null)
+                throw new BadHttpRequestException("Could not find logged user Id.");
+
+            var userId = int.Parse(stringId);
             var logId = await _logs.GetMaxId();
             var log = new ActivityLog
             {
                 Id = ++logId,
                 Name = name,
                 CreatedAt = DateTime.UtcNow,
-                BoardId = boardId
+                BoardId = boardId,
+                ActivityAuthorId = userId,
             };
             return log;
         }
@@ -62,7 +71,7 @@ namespace KanbanBackend.Infrastructure.Services.ActivityLogger
 
             var log = await PrepareLog(name, boardId);
             log.Description = $"User '{boardMember.User.DisplayName} has been {description} Board '{boardMember.Board.Name}'.";
-            log.UserId = userId;
+            log.MemberId = userId;
             
             await _logs.AddAsync(log);
         }

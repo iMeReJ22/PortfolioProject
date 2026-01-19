@@ -1,5 +1,5 @@
 -- Created by Redgate Data Modeler (https://datamodeler.redgate-platform.com)
--- Last modification date: 2026-01-18 15:41:13.314
+-- Last modification date: 2026-01-19 13:55:39.378
 
 -- tables
 -- Table: ActivityLog
@@ -9,18 +9,19 @@ CREATE TABLE ActivityLog (
     Description nvarchar(500)  NOT NULL,
     CreatedAt datetime  NOT NULL,
     BoardId int  NOT NULL,
-    UserId int  NULL,
+    ActivityAuthorId int  NULL,
     TagId int  NULL,
     ColumnId int  NULL,
     TaskId int  NULL,
     TaskCommentId int  NULL,
+    MemberId int  NULL,
     CONSTRAINT ActivityLog_pk PRIMARY KEY  (Id)
 );
 
 CREATE INDEX ALBoardIdIndex on ActivityLog (BoardId ASC)
 ;
 
-CREATE INDEX UserIdIndex on ActivityLog (UserId ASC)
+CREATE INDEX UserIdIndex on ActivityLog (ActivityAuthorId ASC)
 ;
 
 -- Table: BoardMembers
@@ -166,11 +167,16 @@ ALTER TABLE ActivityLog ADD CONSTRAINT ActivityLog_Tasks
     REFERENCES Tasks (Id)
     ON DELETE  SET NULL;
 
--- Reference: ActivityLog_Users (table: ActivityLog)
-ALTER TABLE ActivityLog ADD CONSTRAINT ActivityLog_Users
-    FOREIGN KEY (UserId)
+-- Reference: ActivityLog_Users_Author (table: ActivityLog)
+ALTER TABLE ActivityLog ADD CONSTRAINT ActivityLog_Users_Author
+    FOREIGN KEY (ActivityAuthorId)
     REFERENCES Users (Id)
     ON DELETE  SET NULL;
+
+-- Reference: ActivityLog_Users_Member (table: ActivityLog)
+ALTER TABLE ActivityLog ADD CONSTRAINT ActivityLog_Users_Member
+    FOREIGN KEY (MemberId)
+    REFERENCES Users (Id);
 
 -- Reference: BoardMemebers_Boards (table: BoardMembers)
 ALTER TABLE BoardMembers ADD CONSTRAINT BoardMemebers_Boards

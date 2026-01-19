@@ -26,7 +26,7 @@ namespace KanbanBackend.Application.ActivityLog.Commands.CreateActivityLogTask
                 Id = ++id,
                 BoardId = request.BoardId,
                 TaskId = request.TaskId,
-                UserId = request.UserId,
+                MemberId = request.UserId,
                 Name = request.Name ?? "No Name",
                 Description = request.Description ?? "No Description",
                 CreatedAt = DateTime.UtcNow

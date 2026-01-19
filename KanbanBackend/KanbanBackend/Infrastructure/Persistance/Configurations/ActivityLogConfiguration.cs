@@ -14,11 +14,17 @@ namespace KanbanBackend.Infrastructure.Persistance.Configurations
 
             builder.HasIndex(e => e.BoardId, "ALBoardIdIndex");
 
-            builder.HasIndex(e => e.UserId, "UserIdIndex");
+            builder.HasIndex(e => e.ActivityAuthorId, "UserIdIndex");
 
             builder.Property(e => e.Id).ValueGeneratedNever();
             builder.Property(e => e.CreatedAt).HasColumnType("datetime");
             builder.Property(e => e.Description).HasMaxLength(500);
+            builder.Property(e => e.Name).HasMaxLength(50);
+
+            builder.HasOne(d => d.ActivityAuthor).WithMany(p => p.ActivityLogActivityAuthors)
+                .HasForeignKey(d => d.ActivityAuthorId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("ActivityLog_Users_Author");
 
             builder.HasOne(d => d.Board).WithMany(p => p.ActivityLogs)
                 .HasForeignKey(d => d.BoardId)
@@ -29,6 +35,10 @@ namespace KanbanBackend.Infrastructure.Persistance.Configurations
                 .HasForeignKey(d => d.ColumnId)
                 .OnDelete(DeleteBehavior.SetNull)
                 .HasConstraintName("ActivityLog_Columns");
+
+            builder.HasOne(d => d.Member).WithMany(p => p.ActivityLogMembers)
+                .HasForeignKey(d => d.MemberId)
+                .HasConstraintName("ActivityLog_Users_Member");
 
             builder.HasOne(d => d.Tag).WithMany(p => p.ActivityLogs)
                 .HasForeignKey(d => d.TagId)
@@ -44,11 +54,6 @@ namespace KanbanBackend.Infrastructure.Persistance.Configurations
                 .HasForeignKey(d => d.TaskId)
                 .OnDelete(DeleteBehavior.SetNull)
                 .HasConstraintName("ActivityLog_Tasks");
-
-            builder.HasOne(d => d.User).WithMany(p => p.ActivityLogs)
-                .HasForeignKey(d => d.UserId)
-                .OnDelete(DeleteBehavior.SetNull)
-                .HasConstraintName("ActivityLog_Users");
         }
     }
 }

@@ -8,7 +8,7 @@ namespace KanbanBackend.API.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    //[Authorize]
+    [Authorize]
     public class ActivityLogController : Controller
     {
         private readonly IMediator _mediator;
