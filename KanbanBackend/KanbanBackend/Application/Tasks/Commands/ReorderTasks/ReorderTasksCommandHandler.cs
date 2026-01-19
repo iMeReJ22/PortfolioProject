@@ -1,4 +1,5 @@
 ﻿using KanbanBackend.Application.Common.Interfaces;
+using KanbanBackend.Infrastructure.Services.ActivityLogger;
 using MediatR;
 
 namespace KanbanBackend.Application.Tasks.Commands.ReorderTasks
@@ -7,9 +8,12 @@ namespace KanbanBackend.Application.Tasks.Commands.ReorderTasks
     : IRequestHandler<ReorderTasksCommand, Unit>
     {
         private readonly ITaskRepository _tasks;
+        private readonly IActivityLoggerService _logger;
 
-        public ReorderTasksCommandHandler(ITaskRepository tasks)
+        public ReorderTasksCommandHandler(ITaskRepository tasks, IActivityLoggerService logger)
         {
+
+            _logger = logger;
             _tasks = tasks;
         }
 
@@ -25,6 +29,11 @@ namespace KanbanBackend.Application.Tasks.Commands.ReorderTasks
             }
 
             await _tasks.ReorderAsync(request.ColumnId, existing);
+
+            foreach (var task in existing)
+            {
+                await _logger.AddLogTaskAsync("Task Reordered", "reorderd in", task.Id);
+            }
 
             return Unit.Value;
         }

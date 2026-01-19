@@ -33,6 +33,12 @@ namespace KanbanBackend.Infrastructure.Persistance.Repositories
             await _db.SaveChangesAsync();
         }
 
+        public async System.Threading.Tasks.Task DeleteRangeAsync(IEnumerable<ActivityLog> logs)
+        {
+            _db.ActivityLogs.RemoveRange(logs);
+            await _db.SaveChangesAsync();
+        }
+
         public async Task<IReadOnlyCollection<ActivityLog>> GetForBoardAsync(int boardId)
         {
             var logs = await _db.ActivityLogs

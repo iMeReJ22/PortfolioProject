@@ -39,15 +39,23 @@ namespace KanbanBackend.Infrastructure.Persistance.Repositories
         public async Task<IReadOnlyList<Tag>> GetForTaskAsync(int taskId)
         {
             return await _db.Tags
-                .Include(t => t.Tasks.Any(task => task.Id == taskId))
+                .Include(t => t.Tasks)
+                .Where(t => t.Tasks.Any(task => task.Id == taskId))
                 .ToListAsync();
         }
 
+        //removes all associeted tasks from all tags 
         public async SystemTasks.Task RemoveAllTagsForBoardAsync(int boardId)
         {
             var boardTags = await _db.Tags
                 .Where(t => t.BoardId == boardId)
+                .Include(t => t.Tasks)
                 .ToListAsync();
+
+            foreach (var tag in boardTags)
+            {
+                tag.Tasks.Clear();
+            }
 
             _db.Tags.RemoveRange(boardTags);
             await _db.SaveChangesAsync();
@@ -84,6 +92,21 @@ namespace KanbanBackend.Infrastructure.Persistance.Repositories
         public async Task<int> GetMaxId()
         {
             return await _db.Tags.MaxAsync(t => (int?)t.Id) ?? 0;
+        }
+
+        public async SystemTasks.Task DeleteRangeAsync(IEnumerable<Tag> Tag)
+        {
+            _db.Tags.RemoveRange(Tag);
+            await _db.SaveChangesAsync();
+        }
+
+        public async Task<Tag?> GetTagAsync(int id)
+        {
+            return await _db.Tags
+                .Include(t => t.Tasks)
+                .Include(t => t.Board)
+                .Include(t => t.ActivityLogs)
+                .FirstOrDefaultAsync(t => t.Id == id);
         }
     }
 }

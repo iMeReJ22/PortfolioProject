@@ -1,9 +1,7 @@
 -- Created by Redgate Data Modeler (https://datamodeler.redgate-platform.com)
--- Last modification date: 2026-01-16 11:06:51.347
+-- Last modification date: 2026-01-18 15:41:13.314
 
 -- foreign keys
-ALTER TABLE ActivityLog DROP CONSTRAINT ActivityLog_ActivityType;
-
 ALTER TABLE ActivityLog DROP CONSTRAINT ActivityLog_Boards;
 
 ALTER TABLE ActivityLog DROP CONSTRAINT ActivityLog_Columns;
@@ -42,8 +40,6 @@ ALTER TABLE Tasks DROP CONSTRAINT Tasks_Users;
 
 -- tables
 DROP TABLE ActivityLog;
-
-DROP TABLE ActivityTypes;
 
 DROP TABLE BoardMembers;
 

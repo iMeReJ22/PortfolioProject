@@ -1,5 +1,6 @@
 ﻿using KanbanBackend.Application.Common.Interfaces;
-using KanbanBackend.Domain.Entities;
+using KanbanBackend.Domain.Exceptions;
+using KanbanBackend.Infrastructure.Services.ActivityLogger;
 using MediatR;
 
 namespace KanbanBackend.Application.Boards.Commands.RemoveBoard
@@ -8,22 +9,21 @@ namespace KanbanBackend.Application.Boards.Commands.RemoveBoard
     : IRequestHandler<RemoveBoardMemberCommand, Unit>
     {
         private readonly IBoardRepository _boards;
-
-        public RemoveBoardMemberCommandHandler(IBoardRepository boards)
+        private readonly IActivityLoggerService _logger;
+        public RemoveBoardMemberCommandHandler(IBoardRepository boards, IActivityLoggerService logger)
         {
             _boards = boards;
+            _logger = logger;
         }
 
         public async Task<Unit> Handle(RemoveBoardMemberCommand request, CancellationToken ct)
         {
-            var member = new BoardMember
-            {
-                BoardId = request.BoardId,
-                UserId = request.UserId,
-                Role = ""
-            };
-
+            var member = await _boards.GetMemberAsync(request.BoardId, request.UserId);
+            if (member == null)
+                throw new NotFoundException("BoardMember", request.UserId);
             await _boards.RemoveMemberAsync(member);
+
+            await _logger.AddLogBoardMemberAsync("Board Member Removed", "removed from", request.BoardId, request.UserId);
 
             return Unit.Value;
         }

@@ -1,5 +1,7 @@
 ﻿using KanbanBackend.Application.Common.Interfaces;
 using KanbanBackend.Domain.Exceptions;
+using KanbanBackend.Infrastructure.Services.ActivityLogger;
+using KanbanBackend.Infrastructure.Services.HandleRecursiveDelete;
 using MediatR;
 
 namespace KanbanBackend.Application.Tasks.Commands.DeleteTask
@@ -8,10 +10,14 @@ namespace KanbanBackend.Application.Tasks.Commands.DeleteTask
     : IRequestHandler<DeleteTaskCommand, Unit>
     {
         private readonly ITaskRepository _tasks;
+        private readonly IHandleRecursiveDeleteService _recursive;
+        private readonly IActivityLoggerService _logger;
 
-        public DeleteTaskCommandHandler(ITaskRepository tasks)
+        public DeleteTaskCommandHandler(ITaskRepository tasks, IHandleRecursiveDeleteService recursive, IActivityLoggerService logger)
         {
             _tasks = tasks;
+            _recursive = recursive;
+            _logger = logger;
         }
 
         public async Task<Unit> Handle(DeleteTaskCommand request, CancellationToken ct)
@@ -20,7 +26,9 @@ namespace KanbanBackend.Application.Tasks.Commands.DeleteTask
             if (task == null)
                 throw new NotFoundException("Board", request.Id);
 
-            await _tasks.DeleteAsync(task);
+            await _recursive.HandleTasksAsync([task]);
+
+            await _logger.AddLogTaskAsync("Task Removed", "removed from", task.Id);
 
             return Unit.Value;
         }

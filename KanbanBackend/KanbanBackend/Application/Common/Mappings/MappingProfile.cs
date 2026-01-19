@@ -30,10 +30,8 @@ namespace KanbanBackend.Application.Common.Mappings
             CreateMap<TaskType, TaskTypeDto>();
 
             CreateMap<Domain.Entities.ActivityLog, ActivityLogDto>()
-                .ForMember(d => d.activityType, opt => opt.MapFrom(s => s.ActivityType))
-                .ForMember(d => d.UserName, opt => opt.MapFrom(s => s.User != null ? s.User.DisplayName : "No User"));
+                .ForMember(d => d.Desription, opt => opt.MapFrom(s => s.Description));
 
-            CreateMap<ActivityType, ActivityTypeDto>();
 
             CreateMap<User, UserDto>();
 

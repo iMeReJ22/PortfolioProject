@@ -52,5 +52,21 @@ namespace KanbanBackend.Infrastructure.Persistance.Repositories
         {
             return await _db.TaskComments.MaxAsync(c => (int?)c.Id) ?? 0;
         }
+
+        public async System.Threading.Tasks.Task DeleteRangeAsync(IEnumerable<TaskComment> comment)
+        {
+            _db.TaskComments.RemoveRange(comment);
+            await _db.SaveChangesAsync(); ;
+        }
+
+        public async Task<TaskComment?> GetCommentIdAsync(int id)
+        {
+            return await _db.TaskComments
+                .Include(tc => tc.Task)
+                .ThenInclude(t => t.Column)
+                .Include(tc => tc.Author)
+                .Include(tc => tc.ActivityLogs)
+                .FirstOrDefaultAsync(tc =>  tc.Id == id);
+        }
     }
 }

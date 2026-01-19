@@ -4,11 +4,10 @@ namespace KanbanBackend.Infrastructure.Services.HandleRecursiveDelete
 {
     public interface IHandleRecursiveDeleteService
     {
-        public System.Threading.Tasks.Task HandleColumns(ICollection<Column> columns);
-
-        public System.Threading.Tasks.Task HandleTasks(ICollection<Domain.Entities.Task> tasks);
-        public System.Threading.Tasks.Task HandleComments(ICollection<TaskComment> comments);
-        public System.Threading.Tasks.Task HandleTags(ICollection<Tag> tags);
-        public System.Threading.Tasks.Task HandleLogs(ICollection<ActivityLog> logs);
+        System.Threading.Tasks.Task HandleBoardAsync(Board board);
+        System.Threading.Tasks.Task HandleColumnsAsync(IReadOnlyCollection<Column> columns);
+        System.Threading.Tasks.Task HandleTasksAsync(IReadOnlyCollection<Domain.Entities.Task> tasks);
+        System.Threading.Tasks.Task HandleCommentsAsync(IReadOnlyCollection<TaskComment> comments);
+        System.Threading.Tasks.Task HandleLogsAsync(IReadOnlyCollection<ActivityLog> logs);
     }
 }

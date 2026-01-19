@@ -50,7 +50,7 @@ namespace KanbanBackend.Infrastructure.Persistance.Repositories
             return await _db.Users.ToListAsync();
         }
 
-        public async System.Threading.Tasks.Task RemoveAsync(User user)
+        public async System.Threading.Tasks.Task DeleteAsync(User user)
         {
             _db.Users.Remove(user);
             await _db.SaveChangesAsync();
@@ -60,6 +60,16 @@ namespace KanbanBackend.Infrastructure.Persistance.Repositories
         {
             _db.Users.Update(user);
             await _db.SaveChangesAsync();
+        }
+
+        public async Task<User?> GetUserAsync(int id)
+        {
+            return await _db.Users
+                .Include(u => u.BoardMembers)
+                .ThenInclude(bm => bm.Board)
+                .Include(u => u.Boards)
+                .Include(u => u.ActivityLogs)
+                .FirstOrDefaultAsync(u => u.Id == id);
         }
     }
 }

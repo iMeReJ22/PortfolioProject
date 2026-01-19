@@ -2,6 +2,7 @@
 using KanbanBackend.Application.Common.DTOs;
 using KanbanBackend.Application.Common.Interfaces;
 using KanbanBackend.Domain.Exceptions;
+using KanbanBackend.Infrastructure.Services.ActivityLogger;
 using MediatR;
 
 namespace KanbanBackend.Application.Tasks.Commands.UpdateTask
@@ -11,9 +12,12 @@ namespace KanbanBackend.Application.Tasks.Commands.UpdateTask
     {
         private readonly ITaskRepository _tasks;
         private readonly IMapper _mapper;
+        private readonly IActivityLoggerService _logger;
 
-        public UpdateTaskCommandHandler(ITaskRepository tasks, IMapper mapper)
+        public UpdateTaskCommandHandler(ITaskRepository tasks, IMapper mapper, IActivityLoggerService logger)
         {
+
+            _logger = logger;
             _tasks = tasks;
             _mapper = mapper;
         }
@@ -29,6 +33,8 @@ namespace KanbanBackend.Application.Tasks.Commands.UpdateTask
             task.TaskTypeId = request.TaskTypeId;
 
             await _tasks.UpdateAsync(task);
+
+            await _logger.AddLogTaskAsync("Task Updated", "updated in", task.Id);
 
             return _mapper.Map<TaskDto>(task);
         }

@@ -14,18 +14,11 @@ namespace KanbanBackend.Infrastructure.Persistance.Configurations
 
             builder.HasIndex(e => e.BoardId, "ALBoardIdIndex");
 
-            builder.HasIndex(e => e.ActivityTypeId, "ActivityTypeIdIndex");
-
             builder.HasIndex(e => e.UserId, "UserIdIndex");
 
             builder.Property(e => e.Id).ValueGeneratedNever();
             builder.Property(e => e.CreatedAt).HasColumnType("datetime");
             builder.Property(e => e.Description).HasMaxLength(500);
-
-            builder.HasOne(d => d.ActivityType).WithMany(p => p.ActivityLogs)
-                .HasForeignKey(d => d.ActivityTypeId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("ActivityLog_ActivityType");
 
             builder.HasOne(d => d.Board).WithMany(p => p.ActivityLogs)
                 .HasForeignKey(d => d.BoardId)

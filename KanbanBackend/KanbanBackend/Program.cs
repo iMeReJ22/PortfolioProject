@@ -5,6 +5,7 @@ using KanbanBackend.Application.Common.Interfaces;
 using KanbanBackend.Application.Common.Mappings;
 using KanbanBackend.Infrastructure.Persistance;
 using KanbanBackend.Infrastructure.Persistance.Repositories;
+using KanbanBackend.Infrastructure.Services.ActivityLogger;
 using KanbanBackend.Infrastructure.Services.Authorization;
 using KanbanBackend.Infrastructure.Services.HandleRecursiveDelete;
 using KanbanBackend.Infrastructure.Services.PassHasher;
@@ -27,7 +28,6 @@ namespace KanbanBackend
             builder.Services.Configure<JwtSettings>(builder.Configuration.GetSection("Jwt"));
             builder.Services.AddSingleton<IAuthService, AuthService>();
             builder.Services.AddSingleton<IPasswordHasher, PasswordHasher>();
-            builder.Services.AddSingleton<IHandleRecursiveDeleteService, HandleRecursiveDeleteService>();
             builder.Services.AddMediatR(cfg =>
                 cfg.RegisterServicesFromAssembly(typeof(CreateBoardCommand).Assembly)
                 );
@@ -49,6 +49,9 @@ namespace KanbanBackend
             builder.Services.AddScoped<ITaskCommentRepository, TaskCommentRepository>();
             builder.Services.AddScoped<ITaskRepository, TaskRepository>();
             builder.Services.AddScoped<IUserRepository, UserRepository>();
+
+            builder.Services.AddScoped<IHandleRecursiveDeleteService, HandleRecursiveDeleteService>();
+            builder.Services.AddScoped<IActivityLoggerService, ActivityLoggerService>();
 
             builder.Services.AddDbContext<KanbanDbContext>(options =>
                 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));

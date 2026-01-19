@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using KanbanBackend.Application.Common.DTOs;
 using KanbanBackend.Application.Common.Interfaces;
+using KanbanBackend.Infrastructure.Services.ActivityLogger;
 using MediatR;
 
 namespace KanbanBackend.Application.Tasks.Commands.CreateTask
@@ -10,11 +11,14 @@ namespace KanbanBackend.Application.Tasks.Commands.CreateTask
     {
         private readonly ITaskRepository _tasks;
         private readonly IMapper _mapper;
+        private readonly IActivityLoggerService _logger;
 
-        public CreateTaskCommandHandler(ITaskRepository tasks, IMapper mapper)
+        public CreateTaskCommandHandler(ITaskRepository tasks, IMapper mapper, IActivityLoggerService logger)
+
         {
             _tasks = tasks;
             _mapper = mapper;
+            _logger = logger;
         }
 
         public async Task<TaskDto> Handle(CreateTaskCommand request, CancellationToken ct)
@@ -36,6 +40,7 @@ namespace KanbanBackend.Application.Tasks.Commands.CreateTask
             };
 
             await _tasks.AddAsync(task);
+            await _logger.AddLogTaskAsync("Task Created", "created in", id);
 
             return _mapper.Map<TaskDto>(task);
         }

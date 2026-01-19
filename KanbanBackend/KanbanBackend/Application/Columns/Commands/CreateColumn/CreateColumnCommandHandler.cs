@@ -2,6 +2,7 @@
 using KanbanBackend.Application.Common.DTOs;
 using KanbanBackend.Application.Common.Interfaces;
 using KanbanBackend.Domain.Entities;
+using KanbanBackend.Infrastructure.Services.ActivityLogger;
 using MediatR;
 
 namespace KanbanBackend.Application.Columns.Commands.CreateColumn
@@ -12,11 +13,13 @@ namespace KanbanBackend.Application.Columns.Commands.CreateColumn
     {
         private readonly IColumnRepository _columns;
         private readonly IMapper _mapper;
+        private readonly IActivityLoggerService _logger;
 
-        public CreateColumnCommandHandler(IColumnRepository columns, IMapper mapper)
+        public CreateColumnCommandHandler(IColumnRepository columns, IMapper mapper, IActivityLoggerService logger)
         {
             _columns = columns;
             _mapper = mapper;
+            _logger = logger;
         }
 
         public async Task<ColumnDto> Handle(CreateColumnCommand request, CancellationToken ct)
@@ -32,6 +35,8 @@ namespace KanbanBackend.Application.Columns.Commands.CreateColumn
             };
 
             await _columns.AddAsync(column);
+
+            await _logger.AddLogColumnAsync("Columnt Created", "created", id);
 
             return _mapper.Map<ColumnDto>(column);
         }

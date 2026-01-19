@@ -11,42 +11,71 @@ namespace KanbanBackend.Infrastructure.Services.HandleRecursiveDelete
         private readonly ITaskCommentRepository _comments;
         private readonly ITaskRepository _tasks;
         private readonly IActivityLogRepository _logs;
+        private readonly IBoardRepository _boards;
 
         public HandleRecursiveDeleteService(IColumnRepository columns, 
             ITagRepository tags, 
             ITaskCommentRepository comments, 
             ITaskRepository tasks, 
-            IActivityLogRepository logs)
+            IActivityLogRepository logs,
+            IBoardRepository boards
+            )
         {
             _columns = columns;
             _tags = tags;   
             _comments = comments;
             _tasks = tasks;
             _logs = logs;
+            _boards = boards;
         }
-        public System.Threading.Tasks.Task HandleColumns(ICollection<Column> columns)
+        public async System.Threading.Tasks.Task HandleBoardAsync(Board board)
         {
-            throw new NotImplementedException();
+            var logs = await _logs.GetForBoardAsync(board.Id);
+            await HandleLogsAsync(logs);
+
+            await _tags.RemoveAllTagsForBoardAsync(board.Id); 
+
+            var columns = await _columns.GetForBoardAsync(board.Id);
+            await HandleColumnsAsync(columns);
+
+
+            await _boards.RemoveMemberAsync(new BoardMember { BoardId = board.Id, Role = "Owner", UserId = board.OwnerId });
+            await _boards.DeleteAsync(board);
+        }
+        public async System.Threading.Tasks.Task HandleColumnsAsync(IReadOnlyCollection<Column> columns)
+        {
+            foreach (var column in columns)
+            {
+                var tasks = await _tasks.GetForColumnAsync(column.Id);
+                await HandleTasksAsync(tasks);
+            }
+
+            await _columns.DeleteRangeAsync(columns);
+        }
+        public async System.Threading.Tasks.Task HandleTasksAsync(IReadOnlyCollection<Domain.Entities.Task> tasks)
+        {
+            foreach (var task in tasks)
+            {
+                var comments = await _comments.GetForTaskAsync(task.Id);
+
+                var tags = await _tags.GetForTaskAsync(task.Id);
+                if(tags.Count() > 0)
+                    await _tags.RemoveAllTagsFromTaskAsync(task.Id);
+
+                await HandleCommentsAsync(comments);
+            }
+
+            await _tasks.DeleteRangeAsync(tasks);
         }
 
-        public System.Threading.Tasks.Task HandleComments(ICollection<TaskComment> comments)
+        public async System.Threading.Tasks.Task HandleCommentsAsync(IReadOnlyCollection<TaskComment> comments)
         {
-            throw new NotImplementedException();
+            await _comments.DeleteRangeAsync(comments);
         }
 
-        public System.Threading.Tasks.Task HandleLogs(ICollection<ActivityLog> logs)
+        public async System.Threading.Tasks.Task HandleLogsAsync(IReadOnlyCollection<ActivityLog> logs)
         {
-            throw new NotImplementedException();
-        }
-
-        public System.Threading.Tasks.Task HandleTags(ICollection<Tag> tags)
-        {
-            throw new NotImplementedException();
-        }
-
-        public System.Threading.Tasks.Task HandleTasks(ICollection<Domain.Entities.Task> tasks)
-        {
-            throw new NotImplementedException();
+            await _logs.DeleteRangeAsync(logs);
         }
     }
 }

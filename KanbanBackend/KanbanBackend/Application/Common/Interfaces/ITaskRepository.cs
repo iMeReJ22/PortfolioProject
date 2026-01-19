@@ -3,6 +3,7 @@
     public interface ITaskRepository
     {
         Task<Domain.Entities.Task?> GetByIdAsync(int id);
+        Task<Domain.Entities.Task?> GetTaskAsync(int id);
         Task<IReadOnlyCollection<Domain.Entities.Task>> GetForColumnAsync(int column);
         Task<IReadOnlyCollection<Domain.Entities.Task>> GetForBoardAsync(int boardId);
         Task<int> GetNextOrderIndexAsync(int columnId);
@@ -11,7 +12,7 @@
         Task UpdateAsync(Domain.Entities.Task task);
 
         Task DeleteAsync(Domain.Entities.Task task);
-
+        Task DeleteRangeAsync(IEnumerable<Domain.Entities.Task> task);
         Task MoveAsync(Domain.Entities.Task task, int newColumnId, int newOrderIndex);
         Task ReorderAsync(int columnId, IReadOnlyCollection<Domain.Entities.Task> tasks);
         Task AssignTagAsync(int taskId, int tagId);

@@ -18,7 +18,7 @@ namespace KanbanBackend.Application.Users.Commands.DeleteUser
             if (user == null)
                 throw new NotFoundException("User", request.id);
 
-            await _users.RemoveAsync(user);
+            await _users.DeleteAsync(user);
             return Unit.Value;
         }
     }

@@ -69,5 +69,20 @@ namespace KanbanBackend.Infrastructure.Persistance.Repositories
         {
             return await _db.Columns.MaxAsync(c => (int?)c.Id) ?? 0;
         }
+
+        public async System.Threading.Tasks.Task DeleteRangeAsync(IEnumerable<Column> columns)
+        {
+            _db.Columns.RemoveRange(columns);
+            await _db.SaveChangesAsync();
+        }
+
+        public Task<Column?> GetColumnAsync(int id)
+        {
+            return _db.Columns
+                .Include(c => c.Tasks)
+                .Include(c => c.Board)
+                .Include(c => c.ActivityLogs)
+                .FirstOrDefaultAsync(c => c.Id == id);
+        }
     }
 }

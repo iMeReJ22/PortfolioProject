@@ -1,13 +1,13 @@
 -- Created by Redgate Data Modeler (https://datamodeler.redgate-platform.com)
--- Last modification date: 2026-01-16 12:00:12.814
+-- Last modification date: 2026-01-18 15:41:13.314
 
 -- tables
 -- Table: ActivityLog
 CREATE TABLE ActivityLog (
     Id int  NOT NULL,
+    Name nvarchar(50)  NOT NULL,
     Description nvarchar(500)  NOT NULL,
     CreatedAt datetime  NOT NULL,
-    ActivityTypeId int  NOT NULL,
     BoardId int  NOT NULL,
     UserId int  NULL,
     TagId int  NULL,
@@ -22,17 +22,6 @@ CREATE INDEX ALBoardIdIndex on ActivityLog (BoardId ASC)
 
 CREATE INDEX UserIdIndex on ActivityLog (UserId ASC)
 ;
-
-CREATE INDEX ActivityTypeIdIndex on ActivityLog (ActivityTypeId ASC)
-;
-
--- Table: ActivityTypes
-CREATE TABLE ActivityTypes (
-    Id int  NOT NULL,
-    Name nvarchar(50)  NOT NULL,
-    DisplayName nvarchar(100)  NOT NULL,
-    CONSTRAINT ActivityTypes_pk PRIMARY KEY  (Id)
-);
 
 -- Table: BoardMembers
 CREATE TABLE BoardMembers (
@@ -148,11 +137,6 @@ CREATE UNIQUE INDEX EmailIndex on Users (Email ASC)
 ;
 
 -- foreign keys
--- Reference: ActivityLog_ActivityType (table: ActivityLog)
-ALTER TABLE ActivityLog ADD CONSTRAINT ActivityLog_ActivityType
-    FOREIGN KEY (ActivityTypeId)
-    REFERENCES ActivityTypes (Id);
-
 -- Reference: ActivityLog_Boards (table: ActivityLog)
 ALTER TABLE ActivityLog ADD CONSTRAINT ActivityLog_Boards
     FOREIGN KEY (BoardId)

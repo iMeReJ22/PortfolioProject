@@ -32,6 +32,7 @@ namespace KanbanBackend.Infrastructure.Persistance.Repositories
 
         public async System.Threading.Tasks.Task DeleteAsync(Domain.Entities.Task task)
         {
+            task.Tags.Clear();
             _db.Tasks.Remove(task);
             await _db.SaveChangesAsync();
         }
@@ -138,6 +139,23 @@ namespace KanbanBackend.Infrastructure.Persistance.Repositories
         public async Task<int> GetMaxId()
         {
             return await _db.Tasks.MaxAsync(t => (int?)t.Id) ?? 0;
+        }
+
+        public async System.Threading.Tasks.Task DeleteRangeAsync(IEnumerable<Domain.Entities.Task> task)
+        {
+            _db.Tasks.RemoveRange(task);
+            await _db.SaveChangesAsync();
+        }
+
+        public async Task<Domain.Entities.Task?> GetTaskAsync(int id)
+        {
+            return await _db.Tasks
+                .Include(t => t.Tags)
+                .Include(t => t.Column)
+                .Include(t => t.TaskType)
+                .Include(t => t.CreatedByUser)
+                .Include(t => t.ActivityLogs)
+                .FirstOrDefaultAsync(t => t.Id == id);
         }
     }
 }

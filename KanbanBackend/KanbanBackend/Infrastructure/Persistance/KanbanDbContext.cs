@@ -12,8 +12,6 @@ namespace KanbanBackend.Infrastructure.Persistance
 
         public virtual DbSet<ActivityLog> ActivityLogs { get; set; }
 
-        public virtual DbSet<ActivityType> ActivityTypes { get; set; }
-
         public virtual DbSet<Board> Boards { get; set; }
 
         public virtual DbSet<BoardMember> BoardMembers { get; set; }

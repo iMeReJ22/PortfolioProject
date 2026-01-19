@@ -1,5 +1,7 @@
 ﻿using KanbanBackend.Application.Common.Interfaces;
 using KanbanBackend.Domain.Exceptions;
+using KanbanBackend.Infrastructure.Services.ActivityLogger;
+using KanbanBackend.Infrastructure.Services.HandleRecursiveDelete;
 using MediatR;
 
 namespace KanbanBackend.Application.Columns.Commands.DeleteColumn
@@ -9,10 +11,14 @@ namespace KanbanBackend.Application.Columns.Commands.DeleteColumn
         : IRequestHandler<DeleteColumnCommand, Unit>
     {
         private readonly IColumnRepository _columns;
+        private readonly IHandleRecursiveDeleteService _recursive;
+        private readonly IActivityLoggerService _logger;
 
-        public DeleteColumnCommandHandler(IColumnRepository columns)
+        public DeleteColumnCommandHandler(IColumnRepository columns, IHandleRecursiveDeleteService recursive, IActivityLoggerService logger)
         {
             _columns = columns;
+            _recursive = recursive;
+            _logger = logger;
         }
 
         public async Task<Unit> Handle(DeleteColumnCommand request, CancellationToken ct)
@@ -21,7 +27,9 @@ namespace KanbanBackend.Application.Columns.Commands.DeleteColumn
             if (column == null)
                 throw new NotFoundException("Board", request.Id);
 
-            await _columns.DeleteAsync(column);
+            await _recursive.HandleColumnsAsync([column]);
+
+            await _logger.AddLogColumnAsync("Column Deleted", "deleted", request.Id);
 
             return Unit.Value;
         }

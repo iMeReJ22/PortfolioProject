@@ -44,6 +44,7 @@ namespace KanbanBackend.Infrastructure.Persistance.Repositories
                 .Include(b => b.BoardMembers)
                 .ThenInclude(bm => bm.User)
                 .Include(b => b.Tags)
+                .Include(b => b.ActivityLogs)
                 .FirstOrDefaultAsync(b  => b.Id == id);
         }
 
@@ -89,6 +90,14 @@ namespace KanbanBackend.Infrastructure.Persistance.Repositories
         public async Task<int> GetMaxId()
         {
             return await _db.Boards.MaxAsync(b => (int?)b.Id) ?? 0;
+        }
+
+        public async Task<BoardMember?> GetMemberAsync(int boardId, int memberId)
+        {
+            return await _db.BoardMembers
+                .Include(bm => bm.Board)
+                .Include(bm => bm.User)
+                .FirstOrDefaultAsync(bm => bm.BoardId == boardId && bm.UserId == memberId);
         }
     }
 }

@@ -1,6 +1,8 @@
 ﻿using KanbanBackend.Application.Common.Interfaces;
 using KanbanBackend.Domain.Entities;
 using KanbanBackend.Domain.Exceptions;
+using KanbanBackend.Infrastructure.Services.ActivityLogger;
+using KanbanBackend.Infrastructure.Services.HandleRecursiveDelete;
 using MediatR;
 
 namespace KanbanBackend.Application.Boards.Commands.DeleteBoard
@@ -9,12 +11,12 @@ namespace KanbanBackend.Application.Boards.Commands.DeleteBoard
     : IRequestHandler<DeleteBoardCommand, Unit>
     {
         private readonly IBoardRepository _boards;
-        private readonly IColumnRepository _columns;
+        private readonly IHandleRecursiveDeleteService _recursive;
 
-        public DeleteBoardCommandHandler(IBoardRepository boards, IColumnRepository columns)
+        public DeleteBoardCommandHandler(IBoardRepository boards, IHandleRecursiveDeleteService recursive)
         {
             _boards = boards;
-            _columns = columns;
+            _recursive = recursive;
         }
 
         public async Task<Unit> Handle(DeleteBoardCommand request, CancellationToken ct)
@@ -23,10 +25,7 @@ namespace KanbanBackend.Application.Boards.Commands.DeleteBoard
             if (board == null)
                 throw new NotFoundException("Board", request.Id);
 
-            var columns = await _columns.GetForBoardAsync(board.Id);
-
-            await _boards.RemoveMemberAsync(new BoardMember { BoardId = board.Id, Role = "", UserId = board.OwnerId });
-            await _boards.DeleteAsync(board);
+            await _recursive.HandleBoardAsync(board);
 
             return Unit.Value;
         }

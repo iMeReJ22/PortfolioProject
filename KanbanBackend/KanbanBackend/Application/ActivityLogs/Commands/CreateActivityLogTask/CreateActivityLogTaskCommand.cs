@@ -1,4 +1,5 @@
-﻿using MediatR;
+﻿using KanbanBackend.Application.Common.DTOs;
+using MediatR;
 
 namespace KanbanBackend.Application.ActivityLog.Commands.CreateActivityLogTask
 {
@@ -6,9 +7,9 @@ namespace KanbanBackend.Application.ActivityLog.Commands.CreateActivityLogTask
         int BoardId,
         int? TaskId,
         int UserId,
-        int ActionId,
+        string? Name,
         string? Description
-    ) : IRequest<Unit>;
+    ) : IRequest<ActivityLogDto>;
 
 
 }

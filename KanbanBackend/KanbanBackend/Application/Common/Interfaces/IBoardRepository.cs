@@ -15,6 +15,7 @@ namespace KanbanBackend.Application.Common.Interfaces
         System.Threading.Tasks.Task DeleteAsync(Board board);
 
         Task<IReadOnlyCollection<BoardMember>> GetMembersAsync(int boardId);
+        Task<BoardMember?> GetMemberAsync(int boardId, int memberId);
         System.Threading.Tasks.Task AddMemberAsync(BoardMember member);
         System.Threading.Tasks.Task RemoveMemberAsync(BoardMember member);
         System.Threading.Tasks.Task<int> GetMaxId();
