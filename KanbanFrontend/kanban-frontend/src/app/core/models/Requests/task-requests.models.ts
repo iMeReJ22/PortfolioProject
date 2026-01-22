@@ -23,7 +23,7 @@ export interface ReorderTasksRequest {
     columnId: number;
     tasks: TaskOrderDto[];
 }
-interface TaskOrderDto {
+export interface TaskOrderDto {
     taskId: number;
     orderIndex: number;
 }

@@ -10,7 +10,7 @@ import { TaskCommentDto } from '../../models/DTOs/task-comment.model';
 @Injectable({
     providedIn: 'root',
 })
-export class Comments {
+export class CommentsApiService {
     private readonly endpoint = 'Comments';
 
     constructor(private api: BaseApiService) {}

@@ -6,7 +6,7 @@ export interface TaskDto {
     title: string;
     description: string;
     orderIndex: number;
-    CreatedAt: Date;
+    createdAt: Date;
     columnId: number;
     taskTypeId: number;
     createdByUserId?: number;

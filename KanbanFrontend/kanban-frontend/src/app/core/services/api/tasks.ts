@@ -13,7 +13,7 @@ import {
 @Injectable({
     providedIn: 'root',
 })
-export class Tasks {
+export class TasksApiService {
     private readonly endpoint = 'Tasks';
 
     constructor(private api: BaseApiService) {}

@@ -6,15 +6,17 @@ import { provideStore } from '@ngrx/store';
 import { provideStoreDevtools } from '@ngrx/store-devtools';
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { errorInterceptor } from './core/interceptors/error-interceptor';
+import { provideEffects } from '@ngrx/effects';
 
 export const appConfig: ApplicationConfig = {
     providers: [
-        provideHttpClient(withInterceptors([errorInterceptor])),
-        provideBrowserGlobalErrorListeners(),
-        provideRouter(routes),
-        provideStore(),
-        provideStoreDevtools({ maxAge: 25, logOnly: !isDevMode() }),
-    ],
+    provideHttpClient(withInterceptors([errorInterceptor])),
+    provideBrowserGlobalErrorListeners(),
+    provideRouter(routes),
+    provideStore(),
+    provideStoreDevtools({ maxAge: 25, logOnly: !isDevMode() }),
+    provideEffects()
+],
 };
 
 export const environment = {

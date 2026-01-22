@@ -12,7 +12,7 @@ import { LoginResultDto } from '../../models/DTOs/login-result.models';
 @Injectable({
     providedIn: 'root',
 })
-export class Users {
+export class UsersApiService {
     private readonly endpoint = 'Users';
 
     constructor(private api: BaseApiService) {}

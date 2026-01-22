@@ -7,7 +7,7 @@ import { Observable } from 'rxjs';
 @Injectable({
     providedIn: 'root',
 })
-export class Tags {
+export class TagsApiService {
     private readonly endpoint = 'Tags';
 
     constructor(private api: BaseApiService) {}

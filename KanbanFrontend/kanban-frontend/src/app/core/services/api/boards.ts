@@ -3,15 +3,26 @@ import { BaseApiService } from './base-api';
 import {
     AddBoardMemberRequest,
     CreateBoardRequest,
+    UpdateBoardRequest,
 } from '../../models/Requests/board-requests.models';
 import { BoardDto } from '../../models/DTOs/board.model';
-import { Observable } from 'rxjs';
+import { Observable, OperatorFunction } from 'rxjs';
 import { UserDto } from '../../models/DTOs/user.model';
+import { Action } from '@ngrx/store';
 
 @Injectable({
     providedIn: 'root',
 })
-export class Boards {
+export class BoardsApiService {
+    pipe(
+        arg0: OperatorFunction<
+            unknown,
+            { created: BoardDto; tempId: number } & Action<'[Boards API] Create Board Success'>
+        >,
+        arg1: OperatorFunction<unknown, any>,
+    ): any {
+        throw new Error('Method not implemented.');
+    }
     private readonly endpoint = 'Boards';
 
     constructor(private api: BaseApiService) {}
@@ -25,7 +36,7 @@ export class Boards {
     getBoardsForUser(userId: number): Observable<BoardDto[]> {
         return this.api.get<BoardDto[]>(`${this.endpoint}/user/${userId}`);
     }
-    updateBoard(boardId: number, request: CreateBoardRequest): Observable<BoardDto> {
+    updateBoard(boardId: number, request: UpdateBoardRequest): Observable<BoardDto> {
         return this.api.put<BoardDto>(`${this.endpoint}/${boardId}`, request);
     }
     deleteBoard(boardId: number): Observable<void> {

@@ -11,7 +11,7 @@ import { ColumnDto } from '../../models/DTOs/column.model';
 @Injectable({
     providedIn: 'root',
 })
-export class Columns {
+export class ColumnsApiService {
     private readonly endpoint = 'Columns';
 
     constructor(private api: BaseApiService) {}

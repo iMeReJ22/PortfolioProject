@@ -6,7 +6,7 @@ import { ActivityLogDto } from '../../models/DTOs/activity-log.model';
 @Injectable({
     providedIn: 'root',
 })
-export class ActivityLog {
+export class ActivityLogApiService {
     private readonly endpoint = 'ActivityLog';
     constructor(private api: BaseApiService) {}
     getActivityForBoard(boardId: number): Observable<ActivityLogDto[]> {
