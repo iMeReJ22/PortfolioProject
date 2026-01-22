@@ -5,7 +5,6 @@ import {
     UpdateBoardRequest,
 } from '../../models/Requests/board-requests.models';
 import { BoardDto } from '../../models/DTOs/board.model';
-import { UserDto } from '../../models/DTOs/user.model';
 import { BoardMemberDto } from '../../models/DTOs/board-member.models';
 
 export const BoardsActions = createActionGroup({
@@ -41,9 +40,5 @@ export const BoardsActions = createActionGroup({
             error: string;
             removedBoardMember: BoardMemberDto;
         }>(),
-
-        'Get Board Members': props<{ boardId: number }>(),
-        'Get Board Members Success': props<{ users: UserDto[] }>(),
-        'Get Board Members Failure': props<{ error: string }>(),
     },
 });

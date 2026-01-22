@@ -12,8 +12,7 @@ namespace KanbanBackend.Application.Common.Mappings
                 .ForMember(d => d.Tags, opt => opt.MapFrom(s => s.Tags))
                 .ForMember(d => d.Members, opt => opt.MapFrom(s => s.BoardMembers));
 
-            CreateMap<BoardMember, BoardMemberDto>()
-                .ForMember(d => d.User, opt => opt.MapFrom(s => s.User));
+            CreateMap<BoardMember, BoardMemberDto>();
 
             CreateMap<Column, ColumnDto>()
                 .ForMember(d => d.Tasks, opt => opt.MapFrom(s => s.Tasks));
@@ -30,7 +29,8 @@ namespace KanbanBackend.Application.Common.Mappings
             CreateMap<TaskType, TaskTypeDto>();
 
             CreateMap<Domain.Entities.ActivityLog, ActivityLogDto>()
-                .ForMember(d => d.Desription, opt => opt.MapFrom(s => s.Description));
+                .ForMember(d => d.Desription, opt => opt.MapFrom(s => s.Description))
+                .ForMember(d => d.UserId, opt => opt.MapFrom(s => s.MemberId));
 
 
             CreateMap<User, UserDto>();

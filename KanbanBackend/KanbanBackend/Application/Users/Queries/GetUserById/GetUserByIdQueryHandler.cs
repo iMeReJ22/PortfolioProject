@@ -1,7 +1,6 @@
 ﻿using AutoMapper;
 using KanbanBackend.Application.Common.DTOs;
 using KanbanBackend.Application.Common.Interfaces;
-using KanbanBackend.Domain.Entities;
 using KanbanBackend.Domain.Exceptions;
 using MediatR;
 

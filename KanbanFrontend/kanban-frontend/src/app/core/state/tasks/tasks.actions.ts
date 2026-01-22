@@ -17,7 +17,7 @@ export const TasksActions = createActionGroup({
 
         'Update Task': props<{ update: UpdateTaskRequest }>(),
         'Update Task Success': props<{ task: TaskDto }>(),
-        'Update Task Failure': props<{ error: string; task: TaskDto }>(),
+        'Update Task Failure': props<{ error: string; taskBefore: TaskDto }>(),
 
         'Create Task': props<{ create: CreateTaskRequest; tempId: number }>(),
         'Create Task Success': props<{ task: TaskDto; tempId: number }>(),

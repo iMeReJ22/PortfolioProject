@@ -3,5 +3,5 @@ export interface TagDto {
     name: string;
     colorHex: string;
     boardId: number;
-    createAt: Date;
+    createdAt: Date;
 }

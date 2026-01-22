@@ -4,6 +4,7 @@ using KanbanBackend.Application.Users.Commands.Login;
 using KanbanBackend.Application.Users.Commands.UpdateUser;
 using KanbanBackend.Application.Users.Queries.GetUserById;
 using KanbanBackend.Application.Users.Queries.GetUsers;
+using KanbanBackend.Application.Users.Queries.GetUsersByBoard;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -37,6 +38,12 @@ namespace KanbanBackend.API.Controllers
         {
             var result = await _mediator.Send(command);
             return Ok(result);
+        }
+
+        [HttpPost("logout")]
+        public async Task<IActionResult> Logout()
+        {
+            return NoContent();
         }
 
         [HttpGet]
@@ -77,6 +84,13 @@ namespace KanbanBackend.API.Controllers
 
             var id = int.Parse(stringId);
             var result = await _mediator.Send(new GetUserByIdQuery(id));
+            return Ok(result);
+        }
+
+        [HttpGet("board/{boardId}")]
+        public async Task<IActionResult> GetUsersByBoardId(int boardId)
+        {
+            var result = await _mediator.Send(new GetUsersByBoardQuery(boardId));
             return Ok(result);
         }
     }

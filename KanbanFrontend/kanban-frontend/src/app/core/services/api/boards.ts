@@ -45,9 +45,6 @@ export class BoardsApiService {
     addMemberToBoard(boardId: number, request: AddBoardMemberRequest): Observable<void> {
         return this.api.post<void>(`${this.endpoint}/${boardId}/members`, request);
     }
-    getBoardMembers(boardId: number): Observable<UserDto[]> {
-        return this.api.get<UserDto[]>(`${this.endpoint}/${boardId}/members`);
-    }
     removeMemberFromBoard(boardId: number, userId: number): Observable<void> {
         return this.api.delete<void>(`${this.endpoint}/${boardId}/members/${userId}`);
     }

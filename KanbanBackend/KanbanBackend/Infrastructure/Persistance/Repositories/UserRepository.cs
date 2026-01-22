@@ -1,4 +1,5 @@
-﻿using KanbanBackend.Application.Common.Interfaces;
+﻿using KanbanBackend.Application.Common.DTOs;
+using KanbanBackend.Application.Common.Interfaces;
 using KanbanBackend.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 
@@ -71,6 +72,13 @@ namespace KanbanBackend.Infrastructure.Persistance.Repositories
                 .Include(u => u.ActivityLogMembers)
                 .Include(u => u.ActivityLogActivityAuthors)
                 .FirstOrDefaultAsync(u => u.Id == id);
+        }
+
+        public async Task<ICollection<User>> GetUsersByBoardId(int boardId)
+        {
+            return await _db.Users
+                .Where(u => u.BoardMembers.Any( bm => bm.BoardId== boardId))
+                .ToListAsync();
         }
     }
 }

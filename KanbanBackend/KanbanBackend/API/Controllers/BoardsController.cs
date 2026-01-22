@@ -5,7 +5,6 @@ using KanbanBackend.Application.Boards.Commands.AddBoardMember;
 using KanbanBackend.Application.Boards.Commands.RemoveBoard;
 using KanbanBackend.Application.Boards.Queries.GetBoardById;
 using KanbanBackend.Application.Boards.Queries.GetBoardsForUser;
-using KanbanBackend.Application.Boards.Queries.GetBoardMembers;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
@@ -67,13 +66,6 @@ namespace KanbanBackend.API.Controllers
             if (boardId != command.BoardId) return BadRequest();
             await _mediator.Send(command);
             return NoContent();
-        }
-
-        [HttpGet("{boardId}/members")]
-        public async Task<IActionResult> GetMembers(int boardId)
-        {
-            var result = await _mediator.Send(new GetBoardMembersQuery(boardId));
-            return Ok(result);
         }
 
         [HttpDelete("{boardId}/members/{userId}")]

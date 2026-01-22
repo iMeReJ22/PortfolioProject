@@ -39,12 +39,14 @@ export const taskReducer = createReducer(
     })),
     on(TasksActions.updateTaskSuccess, (state, { task }) => ({
         ...state,
+        status: 'success',
         tasks: state.tasks.map((t) => (t.id === task.id ? task : t)),
     })),
-    on(TasksActions.updateTaskFailure, (state, { error }) => ({
+    on(TasksActions.updateTaskFailure, (state, { error, taskBefore }) => ({
         ...state,
         status: 'error',
         error: error,
+        tasks: state.tasks.map((t) => (t.id === taskBefore.id ? taskBefore : t)),
     })),
 
     on(TasksActions.createTask, (state, { create, tempId }) => {
@@ -87,6 +89,7 @@ export const taskReducer = createReducer(
     on(TasksActions.deleteTaskSuccess, (state) => ({
         ...state,
         status: 'success',
+        error: null,
     })),
     on(TasksActions.deleteTaskFailure, (state, { error, deletedTask }) => ({
         ...state,
@@ -132,7 +135,7 @@ export const taskReducer = createReducer(
         ...state,
         status: 'error',
         error: error,
-        tasks: { ...state.tasks, unorderedTasks },
+        tasks: unorderedTasks,
     })),
 
     on(TasksActions.moveTask, (state, { move }) => {
@@ -143,13 +146,13 @@ export const taskReducer = createReducer(
 
         if (task.columnId != move.targetColumnId) {
             const oldColumnTasks = state.tasks
-                .filter((t) => t.columnId == task.columnId)
+                .filter((t) => t.columnId == task.columnId && t.id !== move.taskId)
                 .sort((a, b) => a.orderIndex - b.orderIndex);
             reorderTasks(oldColumnTasks);
         }
 
         const newColumnTasks = state.tasks
-            .filter((t) => t.columnId == move.targetColumnId)
+            .filter((t) => t.columnId == move.targetColumnId && t.id !== move.taskId)
             .sort((a, b) => a.orderIndex - b.orderIndex);
 
         if (task.columnId != move.targetColumnId) task.columnId = move.targetColumnId;
@@ -160,7 +163,7 @@ export const taskReducer = createReducer(
         return {
             ...state,
             status: 'updating',
-            tasks: { ...state.tasks, ...newColumnTasks },
+            tasks: newColumnTasks,
         };
     }),
     on(TasksActions.moveTaskSuccess, (state) => ({
@@ -171,7 +174,7 @@ export const taskReducer = createReducer(
         ...state,
         status: 'error',
         error: error,
-        tasks: { ...state.tasks, unmovedTasks },
+        tasks: unmovedTasks,
     })),
 
     on(TasksActions.assignTagToTask, (state, { taskId, assign }) => {

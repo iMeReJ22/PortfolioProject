@@ -21,9 +21,9 @@ namespace KanbanBackend.Application.Boards.Commands.RemoveBoard
             var member = await _boards.GetMemberAsync(request.BoardId, request.UserId);
             if (member == null)
                 throw new NotFoundException("BoardMember", request.UserId);
-            await _boards.RemoveMemberAsync(member);
-
             await _logger.AddLogBoardMemberAsync("Board Member Removed", "removed from", request.BoardId, request.UserId);
+
+            await _boards.RemoveMemberAsync(member);
 
             return Unit.Value;
         }

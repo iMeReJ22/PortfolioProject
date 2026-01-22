@@ -29,7 +29,7 @@ namespace KanbanBackend.Application.Boards.Commands.AddBoardMember
             await _boards.AddMemberAsync(member);
 
             var dbMember = await _boards.GetMemberAsync(request.BoardId, request.UserId);
-            if (dbMember != null)
+            if (dbMember == null)
                 throw new NotFoundException("BoardMember", request.UserId);
 
             await _logger.AddLogBoardMemberAsync("Board Member Added", "added to", request.BoardId, request.UserId);

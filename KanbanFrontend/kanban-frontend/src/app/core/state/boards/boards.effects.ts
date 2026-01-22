@@ -141,18 +141,4 @@ export class BoardsEffects {
             ),
         );
     });
-
-    getBoardMember$ = createEffect(() => {
-        return this.actions$.pipe(
-            ofType(BoardsActions.getBoardMembers),
-            switchMap(({ boardId }) =>
-                this.boardsService.getBoardMembers(boardId).pipe(
-                    map((users) => BoardsActions.getBoardMembersSuccess({ users })),
-                    catchError((error) =>
-                        of(BoardsActions.getBoardMembersFailure({ error: error.message })),
-                    ),
-                ),
-            ),
-        );
-    });
 }

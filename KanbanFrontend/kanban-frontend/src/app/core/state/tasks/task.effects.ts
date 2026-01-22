@@ -8,7 +8,6 @@ import { selectAllTasks, selectTaskById, selectTasksByColumnId } from './task.se
 import { concatLatestFrom } from '@ngrx/operators';
 import { AppState } from '../app.state';
 import { TaskDto } from '../../models/DTOs/task.model';
-import { TagDto } from '../../models/DTOs/tag.model';
 
 @Injectable()
 export class TasksEffects {
@@ -43,7 +42,7 @@ export class TasksEffects {
                         of(
                             TasksActions.updateTaskFailure({
                                 error: error.message,
-                                task: existingTask ?? ({} as TaskDto),
+                                taskBefore: existingTask ?? ({} as TaskDto),
                             }),
                         ),
                     ),

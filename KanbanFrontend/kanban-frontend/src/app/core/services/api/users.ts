@@ -38,4 +38,7 @@ export class UsersApiService {
     me(): Observable<UserDto> {
         return this.api.get<UserDto>(`${this.endpoint}/me`);
     }
+    getUsersByBoard(boardId: number): Observable<UserDto[]> {
+        return this.api.get<UserDto[]>(`${this.endpoint}/board/${boardId}`);
+    }
 }

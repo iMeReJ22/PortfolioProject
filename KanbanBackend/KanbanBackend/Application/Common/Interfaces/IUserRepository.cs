@@ -1,4 +1,5 @@
-﻿using KanbanBackend.Domain.Entities;
+﻿using KanbanBackend.Application.Common.DTOs;
+using KanbanBackend.Domain.Entities;
 
 namespace KanbanBackend.Application.Common.Interfaces
 {
@@ -15,5 +16,6 @@ namespace KanbanBackend.Application.Common.Interfaces
         System.Threading.Tasks.Task<ICollection<User>> GetUsers();
         Task<int> GetMaxId();
         System.Threading.Tasks.Task DeleteAsync(User user);
+        Task<ICollection<User>> GetUsersByBoardId(int boardId);
     }
 }
