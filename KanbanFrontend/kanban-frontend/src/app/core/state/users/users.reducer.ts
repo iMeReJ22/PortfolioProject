@@ -39,12 +39,15 @@ export const userReducer = createReducer(
         status: 'loading',
         users: state.users,
     })),
-    on(UsersActions.loginSuccess, (state, { result }) => ({
-        ...state,
-        status: 'success',
-        error: null,
-        loggedUser: result,
-    })),
+    on(UsersActions.loginSuccess, (state, { result }) => {
+        localStorage.setItem('token', result.token);
+        return {
+            ...state,
+            status: 'success',
+            error: null,
+            loggedUser: result,
+        };
+    }),
     on(UsersActions.loginFailure, (state, { error }) => ({
         ...state,
         status: 'error',
@@ -112,6 +115,25 @@ export const userReducer = createReducer(
         users: users,
     })),
     on(UsersActions.getUsersByBoardFailure, (state, { error }) => ({
+        ...state,
+        status: 'error',
+        error,
+    })),
+
+    on(UsersActions.logout, (state, {}) => {
+        localStorage.removeItem('token');
+        return {
+            ...state,
+            status: 'loading',
+            loggedUser: null,
+        };
+    }),
+    on(UsersActions.logoutSuccess, (state, {}) => ({
+        ...state,
+        status: 'success',
+        error: null,
+    })),
+    on(UsersActions.logoutFailure, (state, { error }) => ({
         ...state,
         status: 'error',
         error,

@@ -5,7 +5,7 @@ import { Store } from '@ngrx/store';
 import { AppState } from '../app.state';
 import { catchError, concatMap, map, mergeMap, of, switchMap } from 'rxjs';
 import { UsersActions } from './users.actions';
-import { selectUserById } from './users.selector';
+import { selectLoggedData, selectUserById } from './users.selector';
 import { concatLatestFrom } from '@ngrx/operators';
 import { UserDto } from '../../models/DTOs/user.model';
 
@@ -120,6 +120,18 @@ export class UsersEffects {
                     catchError((error) =>
                         of(UsersActions.getUsersByBoardFailure({ error: error.message })),
                     ),
+                ),
+            ),
+        );
+    });
+
+    effectName$ = createEffect(() => {
+        return this.actions$.pipe(
+            ofType(UsersActions.logout),
+            mergeMap(() =>
+                this.userService.logout().pipe(
+                    map(() => UsersActions.logoutSuccess()),
+                    catchError((error) => of(UsersActions.logoutFailure({ error: error.message }))),
                 ),
             ),
         );
