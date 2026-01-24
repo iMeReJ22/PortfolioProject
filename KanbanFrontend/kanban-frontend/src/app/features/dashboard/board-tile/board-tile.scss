@@ -1,0 +1,44 @@
+.tile-card {
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 1rem;
+    height: 150px; // Stała wysokość jak na szkicu
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    transition:
+        transform 0.2s,
+        box-shadow 0.2s;
+    cursor: pointer;
+
+    &:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        border-color: #6c5ce7;
+    }
+
+    h3 {
+        margin: 0;
+        color: #2d3436;
+        font-size: 1.1rem;
+    }
+
+    .description {
+        font-size: 0.9rem;
+        color: #636e72;
+        overflow: hidden;
+        display: -webkit-box;
+        -webkit-line-clamp: 2; // Maksymalnie 2 linie opisu
+        -webkit-box-orient: vertical;
+    }
+
+    .tile-footer {
+        display: flex;
+        justify-content: space-between;
+        font-size: 0.75rem;
+        color: #b2bec3;
+        border-top: 1px solid #eee;
+        padding-top: 0.5rem;
+    }
+}

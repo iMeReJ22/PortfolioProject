@@ -41,7 +41,4 @@ export class UsersApiService {
     getUsersByBoard(boardId: number): Observable<UserDto[]> {
         return this.api.get<UserDto[]>(`${this.endpoint}/board/${boardId}`);
     }
-    logout(): Observable<void> {
-        return this.api.get<void>(`${this.endpoint}/logout}`);
-    }
 }

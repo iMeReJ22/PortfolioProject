@@ -41,6 +41,7 @@ namespace KanbanBackend.API.Controllers
         }
 
         [HttpPost("logout")]
+        [AllowAnonymous]
         public async Task<IActionResult> Logout()
         {
             return NoContent();
@@ -92,6 +93,6 @@ namespace KanbanBackend.API.Controllers
         {
             var result = await _mediator.Send(new GetUsersByBoardQuery(boardId));
             return Ok(result);
-        }
+        }                
     }
 }

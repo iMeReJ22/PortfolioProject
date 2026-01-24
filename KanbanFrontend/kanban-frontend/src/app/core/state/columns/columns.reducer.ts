@@ -15,7 +15,7 @@ export const initialColumnState: ColumnState = {
     status: 'idle',
 };
 
-export const ColumnReducer = createReducer(
+export const columnReducer = createReducer(
     initialColumnState,
     on(ColumnsActions.createColumn, (state, { request, tempId }) => {
         const optimisticColumn: ColumnDto = {

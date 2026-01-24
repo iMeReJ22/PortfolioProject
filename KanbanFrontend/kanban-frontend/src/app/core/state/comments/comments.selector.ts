@@ -1,8 +1,7 @@
-import { createSelector } from '@ngrx/store';
-import { AppState } from '../app.state';
+import { createFeatureSelector, createSelector } from '@ngrx/store';
 import { CommentState } from './comments.reducer';
 
-export const selectCommentsState = (state: AppState) => state.commentsState;
+export const selectCommentsState = createFeatureSelector<CommentState>('comments');
 
 export const selectAllComments = createSelector(
     selectCommentsState,
@@ -18,3 +17,12 @@ export const selectAllCommentsForTask = (taskId: number) =>
 
 export const selectCommentById = (commentId: number) =>
     createSelector(selectAllComments, (comments) => comments.find((c) => c.id === commentId));
+
+export const selectCommentsError = createSelector(
+    selectCommentsState,
+    (state: CommentState) => state.error,
+);
+export const selectCommentsStatus = createSelector(
+    selectCommentsState,
+    (state: CommentState) => state.status,
+);

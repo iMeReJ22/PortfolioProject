@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
 import { AppState } from '../app.state';
@@ -9,13 +9,10 @@ import { concatLatestFrom } from '@ngrx/operators';
 import { selectAllColumns, selectColumnById } from './columns.selector';
 import { ColumnDto } from '../../models/DTOs/column.model';
 
-@Injectable()
 export class ColumnsEffects {
-    constructor(
-        private actions$: Actions,
-        private columnsService: ColumnsApiService,
-        private store: Store<AppState>,
-    ) {}
+    private actions$ = inject(Actions);
+    private store = inject(Store<AppState>);
+    private columnsService = inject(ColumnsApiService);
 
     createColumn$ = createEffect(() => {
         return this.actions$.pipe(

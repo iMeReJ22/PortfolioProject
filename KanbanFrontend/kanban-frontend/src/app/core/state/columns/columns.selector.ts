@@ -1,8 +1,7 @@
-import { createSelector } from '@ngrx/store';
-import { AppState } from '../app.state';
+import { createFeatureSelector, createSelector } from '@ngrx/store';
 import { ColumnState } from './columns.reducer';
 
-export const selectColumnsState = (state: AppState) => state.columnsState;
+export const selectColumnsState = createFeatureSelector<ColumnState>('columns');
 
 export const selectAllColumns = createSelector(
     selectColumnsState,
@@ -11,3 +10,12 @@ export const selectAllColumns = createSelector(
 
 export const selectColumnById = (columnId: number) =>
     createSelector(selectAllColumns, (columns) => columns.find((c) => c.id === columnId));
+
+export const selectColumnsError = createSelector(
+    selectColumnsState,
+    (state: ColumnState) => state.error,
+);
+export const selectColumnsStatus = createSelector(
+    selectColumnsState,
+    (state: ColumnState) => state.status,
+);

@@ -115,6 +115,18 @@ namespace KanbanBackend
             builder.Services.AddDbContext<KanbanDbContext>(options =>
                 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
+            var myAllowSpecificOrigins = "_myAllowSpecificOrigins";
+            builder.Services.AddCors(options =>
+            {
+                options.AddPolicy(name: myAllowSpecificOrigins,
+                    policy =>
+                    {
+                        policy.WithOrigins("http://localhost:4200")
+                        .AllowAnyHeader()
+                        .AllowAnyMethod()
+                        .AllowCredentials();
+                    });
+            });
 
             var app = builder.Build();
 
@@ -131,6 +143,7 @@ namespace KanbanBackend
             app.MapControllers();
             app.UseAuthentication();
             app.UseAuthorization();
+            app.UseCors(myAllowSpecificOrigins);
 
             app.Run();
         }

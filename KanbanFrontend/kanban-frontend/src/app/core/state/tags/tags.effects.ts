@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { TagsApiService } from '../../services/api/tags';
 import { Store } from '@ngrx/store';
@@ -9,13 +9,10 @@ import { concatLatestFrom } from '@ngrx/operators';
 import { selectTagById } from './tags.selector';
 import { TagDto } from '../../models/DTOs/tag.model';
 
-@Injectable()
 export class TagsEffects {
-    constructor(
-        private actions$: Actions,
-        private tagsService: TagsApiService,
-        private store: Store<AppState>,
-    ) {}
+    private actions$ = inject(Actions);
+    private store = inject(Store<AppState>);
+    private tagsService = inject(TagsApiService);
 
     createTag$ = createEffect(() => {
         return this.actions$.pipe(

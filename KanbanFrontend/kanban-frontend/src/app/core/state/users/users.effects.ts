@@ -1,31 +1,43 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { UsersApiService } from '../../services/api/users';
 import { Store } from '@ngrx/store';
 import { AppState } from '../app.state';
-import { catchError, concatMap, map, mergeMap, of, switchMap } from 'rxjs';
+import { catchError, concatMap, exhaustMap, map, mergeMap, of, switchMap, tap } from 'rxjs';
 import { UsersActions } from './users.actions';
 import { selectLoggedData, selectUserById } from './users.selector';
 import { concatLatestFrom } from '@ngrx/operators';
 import { UserDto } from '../../models/DTOs/user.model';
+import { Router } from '@angular/router';
+import { ToastService } from '../../services/toast/toast.service';
 
-@Injectable()
 export class UsersEffects {
-    constructor(
-        private actions$: Actions,
-        private userService: UsersApiService,
-        private store: Store<AppState>,
-    ) {}
+    private actions$ = inject(Actions);
+    private store = inject(Store<AppState>);
+    private userService = inject(UsersApiService);
+    private router = inject(Router);
+    private toast = inject(ToastService);
 
     createUser$ = createEffect(() => {
         return this.actions$.pipe(
             ofType(UsersActions.createUser),
             concatMap(({ create }) =>
                 this.userService.createUser(create).pipe(
-                    map((createdUser) => UsersActions.createUserSuccess({ createdUser })),
-                    catchError((error) =>
-                        of(UsersActions.createUserFailure({ error: error.message })),
-                    ),
+                    map((createdUser) => {
+                        this.toast.success(
+                            'Registered!',
+                            'Account registered successfully! You will be redirected to the login page.',
+                        );
+                        this.router.navigate(['login']);
+                        return UsersActions.createUserSuccess({ createdUser });
+                    }),
+                    catchError((error) => {
+                        const msg =
+                            error.error?.message ||
+                            'Something went wrong registering your account.';
+                        this.toast.error('Error', msg);
+                        return of(UsersActions.createUserFailure({ error: error.message }));
+                    }),
                 ),
             ),
         );
@@ -34,10 +46,20 @@ export class UsersEffects {
     login$ = createEffect(() => {
         return this.actions$.pipe(
             ofType(UsersActions.login),
-            switchMap(({ login }) =>
+            exhaustMap(({ login }) =>
                 this.userService.login(login).pipe(
-                    map((result) => UsersActions.loginSuccess({ result })),
-                    catchError((error) => of(UsersActions.loginFailure({ error: error.message }))),
+                    map((result) => {
+                        localStorage.setItem('token', result.token);
+                        localStorage.setItem('user', JSON.stringify(result.user));
+
+                        const success = UsersActions.loginSuccess({ result });
+
+                        this.router.navigate(['dashboard']);
+                        return success;
+                    }),
+                    catchError((error) => {
+                        return of(UsersActions.loginFailure({ error: error.message }));
+                    }),
                 ),
             ),
         );
@@ -125,15 +147,16 @@ export class UsersEffects {
         );
     });
 
-    effectName$ = createEffect(() => {
-        return this.actions$.pipe(
-            ofType(UsersActions.logout),
-            mergeMap(() =>
-                this.userService.logout().pipe(
-                    map(() => UsersActions.logoutSuccess()),
-                    catchError((error) => of(UsersActions.logoutFailure({ error: error.message }))),
-                ),
+    logout$ = createEffect(
+        () =>
+            this.actions$.pipe(
+                ofType(UsersActions.logout),
+                tap(() => {
+                    localStorage.removeItem('token');
+                    localStorage.removeItem('user');
+                    this.router.navigate(['home']);
+                }),
             ),
-        );
-    });
+        { dispatch: false },
+    );
 }

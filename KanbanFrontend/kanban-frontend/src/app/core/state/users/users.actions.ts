@@ -39,7 +39,5 @@ export const UsersActions = createActionGroup({
         'Get Users By Board Failure': props<{ error: string }>(),
 
         Logout: emptyProps(),
-        'Logout Success': emptyProps(),
-        'Logout Failure': props<{ error: string }>(),
     },
 });

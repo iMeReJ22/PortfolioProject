@@ -1,0 +1,21 @@
+@if (isLoggedIn()) {
+    @if (sidebarVisibility()) {
+        <aside class="sidebar-container">
+            <div class="brand">
+                <h2>Kanban App</h2>
+                <button class="hide-sidebar-btn" (click)="hideSidebar()">HIDE SIDEBAR</button>
+            </div>
+            <nav class="menu">
+                <a routerLink="/dashboard" routerLinkActive="active">Dashboard</a>
+                <a routerLink="/tasks" routerLinkActive="active">Tasks</a>
+            </nav>
+
+            <div class="user-info">
+                <span class="email">{{ user()?.user?.email }}</span>
+                <button (click)="onLogout()" class="logout-btn">Logout</button>
+            </div>
+        </aside>
+    } @else {
+        <button class="show-sidebar-btn" (click)="showSidebar()">SHOW SIDEBAR</button>
+    }
+}

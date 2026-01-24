@@ -1,9 +1,7 @@
-import { createSelector } from '@ngrx/store';
-import { AppState } from '../app.state';
+import { createFeatureSelector, createSelector } from '@ngrx/store';
 import { UserState } from './users.reducer';
-import { LoginResultDto } from '../../models/DTOs/login-result.models';
 
-export const selectUsersState = (state: AppState) => state.usersState;
+export const selectUsersState = createFeatureSelector<UserState>('users');
 
 export const selectAllUsers = createSelector(selectUsersState, (state: UserState) => state.users);
 
@@ -16,5 +14,14 @@ export const selectLoggedData = createSelector(
 );
 
 export const selectIsLoggedIn = createSelector(selectUsersState, (state: UserState) =>
-    state.loggedUser ? true : false,
+    state?.loggedUser ? true : false,
+);
+
+export const selectUsersError = createSelector(
+    selectUsersState,
+    (state: UserState) => state?.error,
+);
+export const selectUsersStatus = createSelector(
+    selectUsersState,
+    (state: UserState) => state?.status,
 );

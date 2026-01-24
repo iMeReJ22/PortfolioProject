@@ -14,7 +14,7 @@ export const initialLogsState: LogState = {
     status: 'idle',
 };
 
-const featureReducer = createReducer(
+export const logReducer = createReducer(
     initialLogsState,
     on(LogsActions.getActivityForBoard, (state) => ({
         ...state,

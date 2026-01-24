@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { BoardsApiService } from '../../services/api/boards';
 import { Store } from '@ngrx/store';
@@ -12,11 +12,9 @@ import { BoardMemberDto } from '../../models/DTOs/board-member.models';
 
 @Injectable()
 export class BoardsEffects {
-    constructor(
-        private actions$: Actions,
-        private boardsService: BoardsApiService,
-        private store: Store<AppState>,
-    ) {}
+    private actions$ = inject(Actions);
+    private store = inject(Store<AppState>);
+    private boardsService = inject(BoardsApiService);
 
     createBoard$ = createEffect(() => {
         return this.actions$.pipe(

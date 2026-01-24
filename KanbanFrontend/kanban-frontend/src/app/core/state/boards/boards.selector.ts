@@ -1,8 +1,7 @@
-import { createSelector } from '@ngrx/store';
-import { AppState } from '../app.state';
+import { createFeatureSelector, createSelector } from '@ngrx/store';
 import { BoardState } from './boards.reducer';
 
-export const selectBoardState = (state: AppState) => state.boardsState;
+export const selectBoardState = createFeatureSelector<BoardState>('boards');
 
 export const selectAllBoardMembers = createSelector(
     selectBoardState,
@@ -21,3 +20,12 @@ export const selectAllBoards = createSelector(
 
 export const selectBoardById = (boardId: number) =>
     createSelector(selectAllBoards, (boards) => boards.find((board) => board.id === boardId));
+
+export const selectBoardsError = createSelector(
+    selectBoardState,
+    (state: BoardState) => state.error,
+);
+export const selectBoardsStatus = createSelector(
+    selectBoardState,
+    (state: BoardState) => state.status,
+);

@@ -1,7 +1,10 @@
-import { createSelector } from '@ngrx/store';
-import { AppState } from '../app.state';
+import { createFeatureSelector, createSelector } from '@ngrx/store';
 import { LogState } from './activity-log.reducer';
 
-export const selectLogsState = (state: AppState) => state.logsState;
+export const selectLogsState = createFeatureSelector<LogState>('logs');
 
 export const selectAllLogs = createSelector(selectLogsState, (state: LogState) => state.logs);
+
+export const selectLogsError = createSelector(selectLogsState, (state: LogState) => state.error);
+
+export const selectLogsStatus = createSelector(selectLogsState, (state: LogState) => state.status);

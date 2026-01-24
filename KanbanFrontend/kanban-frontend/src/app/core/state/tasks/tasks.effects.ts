@@ -1,21 +1,18 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { TasksApiService } from '../../services/api/tasks';
 import { Store } from '@ngrx/store';
 import { TasksActions } from './tasks.actions';
-import { catchError, concatMap, map, merge, mergeMap, of, switchMap } from 'rxjs';
-import { selectAllTasks, selectTaskById, selectTasksByColumnId } from './task.selectors';
+import { catchError, concatMap, map, mergeMap, of, switchMap } from 'rxjs';
+import { selectAllTasks, selectTaskById, selectTasksByColumnId } from './tasks.selectors';
 import { concatLatestFrom } from '@ngrx/operators';
 import { AppState } from '../app.state';
 import { TaskDto } from '../../models/DTOs/task.model';
 
-@Injectable()
 export class TasksEffects {
-    constructor(
-        private actions$: Actions,
-        private taskService: TasksApiService,
-        private store: Store<AppState>,
-    ) {}
+    private actions$ = inject(Actions);
+    private store = inject(Store<AppState>);
+    private taskService = inject(TasksApiService);
 
     getTasksForBoard$ = createEffect(() =>
         this.actions$.pipe(

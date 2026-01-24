@@ -10,9 +10,12 @@ export interface UserState {
     status: 'idle' | 'loading' | 'success' | 'error' | 'creating' | 'updating' | 'deleting';
 }
 
+const token = localStorage.getItem('token');
+const userJson = localStorage.getItem('user');
+
 export const initialUserState: UserState = {
     users: [],
-    loggedUser: null,
+    loggedUser: token && userJson ? { token: token, user: JSON.parse(userJson) } : null,
     error: null,
     status: 'idle',
 };
@@ -37,10 +40,8 @@ export const userReducer = createReducer(
     on(UsersActions.login, (state) => ({
         ...state,
         status: 'loading',
-        users: state.users,
     })),
     on(UsersActions.loginSuccess, (state, { result }) => {
-        localStorage.setItem('token', result.token);
         return {
             ...state,
             status: 'success',
@@ -120,22 +121,9 @@ export const userReducer = createReducer(
         error,
     })),
 
-    on(UsersActions.logout, (state, {}) => {
-        localStorage.removeItem('token');
+    on(UsersActions.logout, (state) => {
         return {
-            ...state,
-            status: 'loading',
-            loggedUser: null,
+            ...initialUserState,
         };
     }),
-    on(UsersActions.logoutSuccess, (state, {}) => ({
-        ...state,
-        status: 'success',
-        error: null,
-    })),
-    on(UsersActions.logoutFailure, (state, { error }) => ({
-        ...state,
-        status: 'error',
-        error,
-    })),
 );
