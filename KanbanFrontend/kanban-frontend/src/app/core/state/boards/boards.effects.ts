@@ -9,22 +9,38 @@ import { concatLatestFrom } from '@ngrx/operators';
 import { selectBoardById, selectBoardMemberByIds } from './boards.selector';
 import { BoardDto } from '../../models/DTOs/board.model';
 import { BoardMemberDto } from '../../models/DTOs/board-member.models';
+import { UsersActions } from '../users/users.actions';
+import { selectLoggedUser } from '../users/users.selector';
+import { ToastService } from '../../services/toast/toast.service';
 
 @Injectable()
 export class BoardsEffects {
     private actions$ = inject(Actions);
     private store = inject(Store<AppState>);
     private boardsService = inject(BoardsApiService);
+    private toast = inject(ToastService);
 
     createBoard$ = createEffect(() => {
         return this.actions$.pipe(
             ofType(BoardsActions.createBoard),
             concatMap(({ create, tempId }) =>
                 this.boardsService.createBoard(create).pipe(
-                    map((created) => BoardsActions.createBoardSuccess({ created, tempId })),
-                    catchError((error) =>
-                        of(BoardsActions.createBoardFailure({ error: error.message, tempId })),
-                    ),
+                    map((created) => {
+                        this.toast.success(
+                            'Board Created!',
+                            `Successfully created ${create.name}.`,
+                        );
+                        return BoardsActions.createBoardSuccess({ created, tempId });
+                    }),
+                    catchError((error) => {
+                        this.toast.error(
+                            'Error creating.',
+                            `Something went wrong while creating your board.`,
+                        );
+                        return of(
+                            BoardsActions.createBoardFailure({ error: error.message, tempId }),
+                        );
+                    }),
                 ),
             ),
         );
@@ -84,15 +100,22 @@ export class BoardsEffects {
             concatLatestFrom(({ boardId }) => this.store.select(selectBoardById(boardId))),
             concatMap(([{ boardId }, deletedBoard]) =>
                 this.boardsService.deleteBoard(boardId).pipe(
-                    map(() => BoardsActions.deleteBoardSuccess()),
-                    catchError((error) =>
-                        of(
+                    map(() => {
+                        this.toast.success('Board Deleted!', 'Successfully deleted the board.');
+                        return BoardsActions.deleteBoardSuccess();
+                    }),
+                    catchError((error) => {
+                        this.toast.error(
+                            'Error Deleting!',
+                            'Something went wrong while deleting your board.',
+                        );
+                        return of(
                             BoardsActions.deleteBoardFailure({
                                 error: error.message,
                                 deletedBoard: deletedBoard ?? ({} as BoardDto),
                             }),
-                        ),
-                    ),
+                        );
+                    }),
                 ),
             ),
         );
@@ -134,6 +157,34 @@ export class BoardsEffects {
                                 removedBoardMember: removedBoardMember ?? ({} as BoardMemberDto),
                             }),
                         ),
+                    ),
+                ),
+            ),
+        );
+    });
+
+    getDashboardBoardTiles$ = createEffect(() => {
+        return this.actions$.pipe(
+            ofType(BoardsActions.getDashboardBoardTiles),
+            concatLatestFrom(({}) => this.store.select(selectLoggedUser)),
+            switchMap(([{}, user]) =>
+                this.boardsService.getDashboardBoardTiles(user?.id ?? 0).pipe(
+                    switchMap((tiles) => {
+                        const usersToUpsert = tiles.map((t) => t.owner);
+                        const membersToUpsert = tiles.flatMap((t) => t.boardMembers ?? []);
+
+                        return [
+                            UsersActions.upsertUsers({
+                                users: usersToUpsert,
+                            }),
+                            BoardsActions.upsertBoardMembers({
+                                members: membersToUpsert,
+                            }),
+                            BoardsActions.getDashboardBoardTilesSuccess({ tiles }),
+                        ];
+                    }),
+                    catchError((error) =>
+                        of(BoardsActions.getDashboardBoardTilesFailure({ error: error.message })),
                     ),
                 ),
             ),

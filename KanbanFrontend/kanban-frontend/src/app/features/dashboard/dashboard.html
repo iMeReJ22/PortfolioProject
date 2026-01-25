@@ -1,1 +1,102 @@
-<p>dashboard works!</p>
+<div class="dashboard-container">
+    <section class="board-section">
+        <h2 class="owner-header">Your Boards</h2>
+        <button class="btn-primary" (click)="openCreateBoardModal()">
+            <span class="icon">+</span>New Board
+        </button>
+    </section>
+
+    @if (ownerTiles().length > 0) {
+        <div class="tiles-grid">
+            @for (ownerTile of ownerTiles(); track ownerTile.id) {
+                <app-board-tile
+                    [boardTile]="ownerTile"
+                    [isOwner]="true"
+                    (tileCLick)="onClickedTile($event)"
+                    (deleteRequest)="onDeleteBoard($event)"
+                />
+            }
+        </div>
+    } @else {
+        <div class="empty-state">
+            <div class="empty-icon">📂</div>
+            <h3>No Boards yet.</h3>
+            <p>Create your first board to start managing your projects!</p>
+            <button class="btn-outline" (click)="openCreateBoardModal()">
+                Create my first board
+            </button>
+        </div>
+    }
+    @if (memberTiles().length > 0) {
+        <section class="board-section">
+            <h2 class="member-header">Member Boards:</h2>
+        </section>
+        <div class="tiles-grid">
+            @for (memberTile of memberTiles(); track memberTile.id) {
+                <app-board-tile
+                    [boardTile]="memberTile"
+                    [isOwner]="false"
+                    (tileCLick)="onClickedTile($event)"
+                />
+            }
+        </div>
+    }
+    @if (guestTiles().length > 0) {
+        <section class="board-section">
+            <h2 class="guest-header">Guest Boards:</h2>
+        </section>
+        <div class="tiles-grid">
+            @for (guestTile of guestTiles(); track guestTile.id) {
+                <app-board-tile
+                    [boardTile]="guestTile"
+                    [isOwner]="false"
+                    (tileCLick)="onClickedTile($event)"
+                />
+            }
+        </div>
+    }
+</div>
+
+@if (isModalOpen()) {
+    <div class="modal-overlay" (click)="closeModal()">
+        <div class="modal-content" (click)="$event.stopPropagation()">
+            <div class="modal-header">
+                <h3>Create New Board</h3>
+                <button class="close-btn" (click)="closeModal()">&times;</button>
+            </div>
+            <form [formGroup]="newBoardForm" (ngSubmit)="onSubmit()">
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="boardName">Board Title</label>
+                        <input
+                            id="boardName"
+                            type="text"
+                            formControlName="boardName"
+                            placeholder="Boar Name"
+                            class="form-control"
+                        />
+                        <label for="boardDescription">Description</label>
+                        <textarea
+                            id="boardDescription"
+                            formControlName="boardDescription"
+                            placeholder="Description"
+                            class="form-control"
+                        ></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="reset" class="btn-secondary" (click)="closeModal()">
+                        Cancel
+                    </button>
+                    <button
+                        type="submit"
+                        class="btn-primary"
+                        [disabled]="newBoardForm.invalid || status() === 'creating'"
+                    >
+                        {{ status() === 'creating' ? 'Creating...' : 'Create Board' }}
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+}

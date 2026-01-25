@@ -9,7 +9,7 @@ export const authGuard: CanActivateFn = () => {
     const router = inject(Router);
 
     return store.select(selectUsersState).pipe(
-        filter((state) => state.status !== 'loading'),
+        filter((state) => state.status !== 'loading' && state.status !== 'error'),
         take(1),
         map((state) => {
             if (state.loggedUser) return true;

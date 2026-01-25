@@ -27,22 +27,38 @@ export const boardReducer = createReducer(
             createdAt: new Date(Date.now()),
             ownerId: create.ownerId,
         };
+        const optimisticMember: BoardMemberDto = {
+            userId: create.ownerId,
+            boardId: tempId,
+            role: 'owner',
+        };
         return {
             ...state,
             status: 'creating',
             boards: [...state.boards, optimisticBoard],
+            boardMembers: [...state.boardMembers, optimisticMember],
         };
     }),
     on(BoardsActions.createBoardSuccess, (state, { created, tempId }) => ({
         ...state,
         status: 'success',
-        boards: state.boards.map((b) => (b.id === (tempId as any) ? created : b)),
+        boards: state.boards.map((b) => (b.id === tempId ? created : b)),
+        boardMembers: state.boardMembers.map((bm) => {
+            const replacement: BoardMemberDto = {
+                userId: created.ownerId,
+                boardId: created.id,
+                role: 'owner',
+            };
+
+            return bm.userId === created.ownerId && bm.boardId === tempId ? replacement : bm;
+        }),
     })),
     on(BoardsActions.createBoardFailure, (state, { error, tempId }) => ({
         ...state,
         status: 'error',
         error,
-        boards: state.boards.filter((b) => b.id !== (tempId as any)),
+        boards: state.boards.filter((b) => b.id !== tempId),
+        boardMembers: state.boardMembers.filter((bm) => bm.boardId !== tempId),
     })),
 
     on(BoardsActions.getBoardById, (state) => ({
@@ -104,9 +120,7 @@ export const boardReducer = createReducer(
     on(BoardsActions.deleteBoardFailure, (state, { deletedBoard }) => ({
         ...state,
         status: 'error',
-        boards: [...state.boards, deletedBoard].sort(
-            (a, b) => a.createdAt.getTime() - b.createdAt.getTime(),
-        ),
+        boards: [...state.boards, deletedBoard],
     })),
 
     on(BoardsActions.addMemberToBoard, (state, { request }) => {
@@ -155,4 +169,39 @@ export const boardReducer = createReducer(
             compareRoles(a, b),
         ),
     })),
+
+    on(BoardsActions.getDashboardBoardTiles, (state, {}) => ({
+        ...state,
+        status: 'loading',
+    })),
+    on(BoardsActions.getDashboardBoardTilesSuccess, (state, { tiles }) => ({
+        ...state,
+        status: 'success',
+        error: null,
+        boards: tiles.map((t) => {
+            const board: BoardDto = { ...t, ownerId: t.owner.id };
+            return board;
+        }),
+    })),
+    on(BoardsActions.getDashboardBoardTilesFailure, (state, { error }) => ({
+        ...state,
+        status: 'error',
+        error,
+    })),
+
+    on(BoardsActions.upsertBoardMembers, (state, { members }) => {
+        const otherMembers = state.boardMembers.filter(
+            (existing) =>
+                !members.some(
+                    (added) =>
+                        added.userId === existing.userId && added.boardId === existing.boardId,
+                ),
+        );
+
+        return {
+            ...state,
+            boardMembers: [...otherMembers, ...members],
+            status: 'success',
+        };
+    }),
 );

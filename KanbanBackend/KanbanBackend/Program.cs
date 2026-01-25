@@ -128,6 +128,7 @@ namespace KanbanBackend
                     });
             });
 
+
             var app = builder.Build();
 
             // Enable Swagger UI and redirect root to Swagger UI

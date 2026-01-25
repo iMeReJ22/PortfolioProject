@@ -1,7 +1,7 @@
 export interface BoardMemberDto {
     userId: number;
     boardId: number;
-    role: 'owner' | 'member' | 'guest';
+    role: 'owner' | 'member' | 'guest' | 'Owner';
 }
 
 export function compareRoles(a: BoardMemberDto, b: BoardMemberDto) {

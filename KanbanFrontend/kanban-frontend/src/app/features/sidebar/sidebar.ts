@@ -1,7 +1,7 @@
 import { Component, inject, signal } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 import { Store } from '@ngrx/store';
-import { selectIsLoggedIn, selectLoggedData } from '../../core/state/users/users.selector';
+import { selectIsLoggedIn, selectLoggedUser } from '../../core/state/users/users.selector';
 import { UsersActions } from '../../core/state/users/users.actions';
 
 @Component({
@@ -12,7 +12,7 @@ import { UsersActions } from '../../core/state/users/users.actions';
 })
 export class Sidebar {
     private store = inject(Store);
-    user = this.store.selectSignal(selectLoggedData);
+    user = this.store.selectSignal(selectLoggedUser);
 
     isLoggedIn = this.store.selectSignal(selectIsLoggedIn);
     sidebarVisibility = signal(true);

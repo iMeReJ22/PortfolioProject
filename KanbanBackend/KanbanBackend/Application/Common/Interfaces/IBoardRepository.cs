@@ -1,4 +1,5 @@
-﻿using KanbanBackend.Domain.Entities;
+﻿using KanbanBackend.Application.Boards.Queries.GetDashboardBoardsWithOwners;
+using KanbanBackend.Domain.Entities;
 
 namespace KanbanBackend.Application.Common.Interfaces
 {
@@ -19,6 +20,7 @@ namespace KanbanBackend.Application.Common.Interfaces
         System.Threading.Tasks.Task AddMemberAsync(BoardMember member);
         System.Threading.Tasks.Task RemoveMemberAsync(BoardMember member);
         System.Threading.Tasks.Task<int> GetMaxId();
-
+        Task<IReadOnlyCollection<Board>> GetDashboardForUser(int userId);
+        System.Threading.Tasks.Task RemoveMembersRangeAsync(IReadOnlyCollection<BoardMember> members);
     }
 }

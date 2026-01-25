@@ -7,6 +7,7 @@ import {
     ReorderTasksRequest,
     MoveTaskRequest,
 } from '../../models/Requests/task-requests.models';
+import { UserDto } from '../../models/DTOs/user.model';
 
 export const TasksActions = createActionGroup({
     source: 'Tasks API',

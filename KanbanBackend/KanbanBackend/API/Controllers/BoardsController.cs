@@ -8,6 +8,7 @@ using KanbanBackend.Application.Boards.Queries.GetBoardsForUser;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
+using KanbanBackend.Application.Boards.Queries.GetDashboardBoardsWithOwners;
 
 namespace KanbanBackend.API.Controllers
 {
@@ -73,6 +74,13 @@ namespace KanbanBackend.API.Controllers
         {
             await _mediator.Send(new RemoveBoardMemberCommand(boardId, userId));
             return NoContent();
+        }
+
+        [HttpGet("dashboard/{userId}")]
+        public async Task<IActionResult> GetDashboardBoardsWithOwners(int userId)
+        {
+            var result = await _mediator.Send(new GetDashboardBoardsWithOwnersQuery(userId));
+            return Ok(result);
         }
     }
 }

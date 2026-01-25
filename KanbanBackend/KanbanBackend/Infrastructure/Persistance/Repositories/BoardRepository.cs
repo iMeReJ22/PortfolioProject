@@ -1,4 +1,5 @@
-﻿using KanbanBackend.Application.Common.Interfaces;
+﻿using KanbanBackend.Application.Boards.Queries.GetDashboardBoardsWithOwners;
+using KanbanBackend.Application.Common.Interfaces;
 using KanbanBackend.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 
@@ -45,7 +46,7 @@ namespace KanbanBackend.Infrastructure.Persistance.Repositories
                 .ThenInclude(bm => bm.User)
                 .Include(b => b.Tags)
                 .Include(b => b.ActivityLogs)
-                .FirstOrDefaultAsync(b  => b.Id == id);
+                .FirstOrDefaultAsync(b => b.Id == id);
         }
 
         public async Task<Board?> GetByIdAsync(int id)
@@ -74,6 +75,12 @@ namespace KanbanBackend.Infrastructure.Persistance.Repositories
             await _db.SaveChangesAsync();
         }
 
+        public async System.Threading.Tasks.Task RemoveMembersRangeAsync(IReadOnlyCollection<BoardMember> members)
+        {
+            _db.BoardMembers.RemoveRange(members);
+            await _db.SaveChangesAsync();
+        }
+
         public async System.Threading.Tasks.Task UpdateAsync(Board board)
         {
             _db.Boards.Update(board);
@@ -83,7 +90,7 @@ namespace KanbanBackend.Infrastructure.Persistance.Repositories
         public async Task<bool> UserHasAccessAsync(int boardId, int userId)
         {
             var boardMember = await _db.BoardMembers
-                .Where(bm => bm.UserId == userId &&  bm.BoardId == boardId)
+                .Where(bm => bm.UserId == userId && bm.BoardId == boardId)
                 .FirstOrDefaultAsync();
             return boardMember != null;
         }
@@ -98,6 +105,15 @@ namespace KanbanBackend.Infrastructure.Persistance.Repositories
                 .Include(bm => bm.Board)
                 .Include(bm => bm.User)
                 .FirstOrDefaultAsync(bm => bm.BoardId == boardId && bm.UserId == memberId);
+        }
+
+        public async Task<IReadOnlyCollection<Board>> GetDashboardForUser(int userId)
+        {
+            return await _db.Boards
+                .Include(b => b.Owner)
+                .Include(b => b.BoardMembers)
+                .Where(b => b.BoardMembers.Any(bm => bm.UserId == userId))
+                .ToListAsync();
         }
     }
 }

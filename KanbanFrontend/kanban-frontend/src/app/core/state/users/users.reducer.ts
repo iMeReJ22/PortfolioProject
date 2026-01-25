@@ -2,6 +2,7 @@ import { createReducer, on } from '@ngrx/store';
 import { UserDto } from '../../models/DTOs/user.model';
 import { UsersActions } from './users.actions';
 import { LoginResultDto } from '../../models/DTOs/login-result.models';
+import { createEntityAdapter, EntityAdapter, EntityState } from '@ngrx/entity';
 
 export interface UserState {
     users: UserDto[];
@@ -12,13 +13,17 @@ export interface UserState {
 
 const token = localStorage.getItem('token');
 const userJson = localStorage.getItem('user');
+const user = userJson ? JSON.parse(userJson) : null;
 
+export const adapter: EntityAdapter<UserDto> = createEntityAdapter<UserDto>();
 export const initialUserState: UserState = {
-    users: [],
-    loggedUser: token && userJson ? { token: token, user: JSON.parse(userJson) } : null,
+    users: user ? [user] : [],
+    loggedUser: token && user ? { token: token, user: user } : null,
     error: null,
     status: 'idle',
 };
+
+export const { selectIds, selectEntities, selectAll, selectTotal } = adapter.getSelectors();
 
 export const userReducer = createReducer(
     initialUserState,
@@ -124,6 +129,17 @@ export const userReducer = createReducer(
     on(UsersActions.logout, (state) => {
         return {
             ...initialUserState,
+        };
+    }),
+
+    on(UsersActions.upsertUsers, (state, { users }) => {
+        const otherUsers = state.users.filter(
+            (existing) => !users.some((added) => added.id === existing.id),
+        );
+        return {
+            ...state,
+            users: [...otherUsers, ...users],
+            status: 'success',
         };
     }),
 );

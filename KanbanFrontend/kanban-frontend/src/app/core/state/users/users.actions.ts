@@ -39,5 +39,7 @@ export const UsersActions = createActionGroup({
         'Get Users By Board Failure': props<{ error: string }>(),
 
         Logout: emptyProps(),
+
+        'Upsert Users': props<{ users: UserDto[] }>(),
     },
 });

@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using KanbanBackend.Application.Boards.Queries.GetDashboardBoardsWithOwners;
 using KanbanBackend.Application.Common.DTOs;
 using KanbanBackend.Domain.Entities;
 
@@ -35,6 +36,9 @@ namespace KanbanBackend.Application.Common.Mappings
 
             CreateMap<User, UserDto>();
 
+            CreateMap<Board, BoardTileDto>()
+                .ForMember(d => d.Owner, opt => opt.MapFrom(s => s.Owner))
+                .ForMember(d => d.boardMembers, opt => opt.MapFrom(s => s.BoardMembers));
         }
     }
 }

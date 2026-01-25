@@ -38,8 +38,8 @@ namespace KanbanBackend.Infrastructure.Services.HandleRecursiveDelete
             var columns = await _columns.GetForBoardAsync(board.Id);
             await HandleColumnsAsync(columns);
 
-
-            await _boards.RemoveMemberAsync(new BoardMember { BoardId = board.Id, Role = "Owner", UserId = board.OwnerId });
+            var members = await _boards.GetMembersAsync(board.Id);
+            await _boards.RemoveMembersRangeAsync(members);
             await _boards.DeleteAsync(board);
         }
         public async System.Threading.Tasks.Task HandleColumnsAsync(IReadOnlyCollection<Column> columns)

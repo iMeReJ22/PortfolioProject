@@ -13,8 +13,13 @@ export const selectLoggedData = createSelector(
     (state: UserState) => state.loggedUser,
 );
 
+export const selectLoggedUser = createSelector(
+    selectUsersState,
+    (state: UserState) => state.loggedUser?.user,
+);
+
 export const selectIsLoggedIn = createSelector(selectUsersState, (state: UserState) =>
-    state?.loggedUser ? true : false,
+    state?.loggedUser == null ? false : true,
 );
 
 export const selectUsersError = createSelector(

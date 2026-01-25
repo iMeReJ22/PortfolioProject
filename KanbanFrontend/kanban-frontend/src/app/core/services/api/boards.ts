@@ -5,9 +5,8 @@ import {
     CreateBoardRequest,
     UpdateBoardRequest,
 } from '../../models/Requests/board-requests.models';
-import { BoardDto } from '../../models/DTOs/board.model';
+import { BoardDto, BoardTileDto } from '../../models/DTOs/board.model';
 import { Observable, OperatorFunction } from 'rxjs';
-import { UserDto } from '../../models/DTOs/user.model';
 import { Action } from '@ngrx/store';
 
 @Injectable({
@@ -47,5 +46,8 @@ export class BoardsApiService {
     }
     removeMemberFromBoard(boardId: number, userId: number): Observable<void> {
         return this.api.delete<void>(`${this.endpoint}/${boardId}/members/${userId}`);
+    }
+    getDashboardBoardTiles(userId: number): Observable<BoardTileDto[]> {
+        return this.api.get<BoardTileDto[]>(`${this.endpoint}/dashboard/${userId}`);
     }
 }

@@ -1,12 +1,15 @@
-<div class="tile-card">
+<div class="tile-card" (click)="onTileClick()">
+    @if (isOwner()) {
+        <button class="delete-btn" (click)="onDelete($event)">🗑️</button>
+    }
     <div class="tile-header">
-        <h3>{{ board.name }}</h3>
+        <h3>{{ boardTile().name }}</h3>
     </div>
     <div class="tile-body">
-        <p class="description">{{ board.description }}</p>
+        <p class="description">{{ boardTile().description }}</p>
     </div>
     <div class="tile-footer">
-        <span class="date"> {{ board.createdAt | date: 'shortDate' }}</span>
-        <span class="owner">{{ board.ownerName }}</span>
+        <span class="date"> {{ boardTile().createdAt }}</span>
+        <span class="owner">{{ boardTile().owner.displayName }}</span>
     </div>
 </div>

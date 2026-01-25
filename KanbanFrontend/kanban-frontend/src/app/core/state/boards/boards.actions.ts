@@ -4,8 +4,9 @@ import {
     CreateBoardRequest,
     UpdateBoardRequest,
 } from '../../models/Requests/board-requests.models';
-import { BoardDto } from '../../models/DTOs/board.model';
+import { BoardDto, BoardTileDto } from '../../models/DTOs/board.model';
 import { BoardMemberDto } from '../../models/DTOs/board-member.models';
+import { UserDto } from '../../models/DTOs/user.model';
 
 export const BoardsActions = createActionGroup({
     source: 'Boards API',
@@ -40,5 +41,11 @@ export const BoardsActions = createActionGroup({
             error: string;
             removedBoardMember: BoardMemberDto;
         }>(),
+
+        'Get Dashboard Board Tiles': emptyProps(),
+        'Get Dashboard Board Tiles Success': props<{ tiles: BoardTileDto[] }>(),
+        'Get Dashboard Board Tiles Failure': props<{ error: string }>(),
+
+        'Upsert Board Members': props<{ members: BoardMemberDto[] }>(),
     },
 });
