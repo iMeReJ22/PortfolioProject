@@ -9,6 +9,7 @@ import {
     ReorderTasksRequest,
     UpdateTaskRequest,
 } from '../../models/Requests/task-requests.models';
+import { TaskTypeDto } from '../../models/DTOs/task-type.model';
 
 @Injectable({
     providedIn: 'root',
@@ -47,5 +48,8 @@ export class TasksApiService {
     }
     removeTagFromTask(taskId: number, tagId: number): Observable<void> {
         return this.api.delete<void>(`${this.endpoint}/${taskId}/remove-tag/${tagId}`);
+    }
+    getTaskTypes(): Observable<TaskTypeDto[]> {
+        return this.api.get<TaskTypeDto[]>(`${this.endpoint}/types`);
     }
 }

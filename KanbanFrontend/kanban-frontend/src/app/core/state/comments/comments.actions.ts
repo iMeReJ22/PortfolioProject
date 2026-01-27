@@ -23,5 +23,8 @@ export const CommentsActions = createActionGroup({
         'Delete Comment': props<{ commentId: number }>(),
         'Delete Comment Success': emptyProps(),
         'Delete Comment Failure': props<{ error: string; deletedComment: TaskCommentDto }>(),
+
+        'Set Comments': props<{ comments: TaskCommentDto[] }>(),
+        'Upsert Comments': props<{ comments: TaskCommentDto[] }>(),
     },
 });

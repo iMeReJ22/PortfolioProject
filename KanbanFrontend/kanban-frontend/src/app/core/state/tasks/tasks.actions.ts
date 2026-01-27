@@ -7,7 +7,7 @@ import {
     ReorderTasksRequest,
     MoveTaskRequest,
 } from '../../models/Requests/task-requests.models';
-import { UserDto } from '../../models/DTOs/user.model';
+import { TaskTypeDto } from '../../models/DTOs/task-type.model';
 
 export const TasksActions = createActionGroup({
     source: 'Tasks API',
@@ -47,5 +47,11 @@ export const TasksActions = createActionGroup({
         'Remove Tag From Task': props<{ taskId: number; tagId: number }>(),
         'Remove Tag From Task Success': emptyProps(),
         'Remove Tag From Task Failure': props<{ error: string; taggedTask: TaskDto }>(),
+
+        'Upsert Tasks': props<{ tasks: TaskDto[] }>(),
+
+        'Get Task Types': emptyProps(),
+        'Get Task Types Success': props<{ types: TaskTypeDto[] }>(),
+        'Get Task Types Failure': props<{ error: string }>(),
     },
 });

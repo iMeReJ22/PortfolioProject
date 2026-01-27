@@ -3,6 +3,7 @@ import { CanActivateFn, Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { selectIsLoggedIn, selectUsersState } from '../state/users/users.selector';
 import { filter, map, take } from 'rxjs';
+import { UsersActions } from '../state/users/users.actions';
 
 export const authGuard: CanActivateFn = () => {
     const store = inject(Store);
@@ -13,6 +14,7 @@ export const authGuard: CanActivateFn = () => {
         take(1),
         map((state) => {
             if (state.loggedUser) return true;
+            store.dispatch(UsersActions.logout());
             return router.createUrlTree(['/login']);
         }),
     );

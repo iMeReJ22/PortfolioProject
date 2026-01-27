@@ -183,4 +183,18 @@ export class TasksEffects {
             ),
         );
     });
+
+    getTaskTypes$ = createEffect(() => {
+        return this.actions$.pipe(
+            ofType(TasksActions.getTaskTypes),
+            switchMap(({}) =>
+                this.taskService.getTaskTypes().pipe(
+                    map((types) => TasksActions.getTaskTypesSuccess({ types })),
+                    catchError((error) =>
+                        of(TasksActions.getTaskTypesFailure({ error: error.message })),
+                    ),
+                ),
+            ),
+        );
+    });
 }

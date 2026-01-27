@@ -96,4 +96,19 @@ export const commentReducer = createReducer(
             (a, b) => a.createdAt.getTime() - b.createdAt.getTime(),
         ),
     })),
+
+    on(CommentsActions.upsertComments, (state, { comments }) => {
+        return {
+            ...state,
+            comments: mergeComments(state.comments, comments),
+        };
+    }),
 );
+function mergeComments(left: TaskCommentDto[], right: TaskCommentDto[]) {
+    const map = new Map<number, TaskCommentDto>();
+    [...left, ...right].forEach((item) => {
+        const key = item.id;
+        map.set(key, { ...map.get(key), ...item });
+    });
+    return Array.from(map.values());
+}

@@ -28,5 +28,7 @@ export const ColumnsActions = createActionGroup({
         'Reorder Columns': props<{ boardId: number; request: ReorderColumnsRequest }>(),
         'Reorder Columns Success': emptyProps(),
         'Reorder Columns Failure': props<{ error: string; columnsBefore: ColumnDto[] }>(),
+
+        'Upsert Columns': props<{ columns: ColumnDto[] }>(),
     },
 });

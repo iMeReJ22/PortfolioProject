@@ -1,3 +1,5 @@
+import { UserDto } from './user.model';
+
 export interface BoardMemberDto {
     userId: number;
     boardId: number;
@@ -14,4 +16,8 @@ export function compareRoles(a: BoardMemberDto, b: BoardMemberDto) {
         if (b.role === 'guest') return 1;
     }
     return -1;
+}
+
+export interface DetailedBoardMemberDto extends BoardMemberDto {
+    users: UserDto[];
 }

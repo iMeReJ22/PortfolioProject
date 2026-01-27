@@ -4,6 +4,7 @@ import { Login } from './features/home/login/login';
 import { Register } from './features/home/register/register';
 import { Dashboard } from './features/dashboard/dashboard';
 import { Home } from './features/home/home';
+import { Board } from './features/board/board';
 
 export const routes: Routes = [
     {
@@ -26,6 +27,11 @@ export const routes: Routes = [
     {
         path: 'dashboard',
         component: Dashboard,
+        canActivate: [authGuard],
+    },
+    {
+        path: 'board/:id',
+        component: Board,
         canActivate: [authGuard],
     },
 ];

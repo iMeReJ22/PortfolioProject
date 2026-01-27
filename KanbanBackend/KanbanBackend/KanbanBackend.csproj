@@ -7,8 +7,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="API\Filters\" />
-    <Folder Include="API\Extensions\" />
     <Folder Include="Infrastructure\Persistance\Migrations\" />
   </ItemGroup>
 

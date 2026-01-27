@@ -1,1 +1,18 @@
-<p>column works!</p>
+<div class="column-container">
+    <section class="name-section">
+        <h3 class="name-header">{{ thisColumn().name }}</h3>
+    </section>
+    @if (canEdit()) {
+        <button class="delete-btn" (click)="onDeleteColumn($event)">🗑️</button>
+    }
+    <section class="tasks-section">
+        <div class="tasks-tiles">
+            @if (canEdit()) {
+                <button class="create-task-btn">+</button>
+            }
+            @for (task of tasks(); track task.id) {
+                <app-task-tile [thisTask]="task" [canEdit]="canEdit()" />
+            }
+        </div>
+    </section>
+</div>

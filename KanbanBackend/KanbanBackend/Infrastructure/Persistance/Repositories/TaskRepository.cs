@@ -1,5 +1,7 @@
-﻿using KanbanBackend.Application.Common.Interfaces;
+﻿using KanbanBackend.Application.Common.DTOs;
+using KanbanBackend.Application.Common.Interfaces;
 using KanbanBackend.Application.Tasks.Commands.ReorderTasks;
+using KanbanBackend.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace KanbanBackend.Infrastructure.Persistance.Repositories
@@ -156,6 +158,11 @@ namespace KanbanBackend.Infrastructure.Persistance.Repositories
                 .Include(t => t.CreatedByUser)
                 .Include(t => t.ActivityLogs)
                 .FirstOrDefaultAsync(t => t.Id == id);
+        }
+        public async Task<IReadOnlyCollection<TaskType>> GetTaskTypesAsync()
+        {
+            return await _db.TaskTypes
+                .ToListAsync();
         }
     }
 }

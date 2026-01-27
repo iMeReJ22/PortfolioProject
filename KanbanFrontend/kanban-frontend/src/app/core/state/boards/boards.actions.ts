@@ -4,9 +4,9 @@ import {
     CreateBoardRequest,
     UpdateBoardRequest,
 } from '../../models/Requests/board-requests.models';
-import { BoardDto, BoardTileDto } from '../../models/DTOs/board.model';
+import { BoardDto, BoardTileDto, DetailedBoardDto } from '../../models/DTOs/board.model';
 import { BoardMemberDto } from '../../models/DTOs/board-member.models';
-import { UserDto } from '../../models/DTOs/user.model';
+import { TaskTypeDto } from '../../models/DTOs/task-type.model';
 
 export const BoardsActions = createActionGroup({
     source: 'Boards API',
@@ -47,5 +47,9 @@ export const BoardsActions = createActionGroup({
         'Get Dashboard Board Tiles Failure': props<{ error: string }>(),
 
         'Upsert Board Members': props<{ members: BoardMemberDto[] }>(),
+
+        'Get Detailed Board By Id': props<{ boardId: number }>(),
+        'Get Detailed Board By Id Success': props<{ board: DetailedBoardDto }>(),
+        'Get Detailed Board By Id Failure': props<{ error: string }>(),
     },
 });

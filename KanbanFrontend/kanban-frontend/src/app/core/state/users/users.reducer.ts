@@ -126,20 +126,26 @@ export const userReducer = createReducer(
         error,
     })),
 
-    on(UsersActions.logout, (state) => {
+    on(UsersActions.logout, () => {
         return {
             ...initialUserState,
+            loggedUser: null,
         };
     }),
 
     on(UsersActions.upsertUsers, (state, { users }) => {
-        const otherUsers = state.users.filter(
-            (existing) => !users.some((added) => added.id === existing.id),
-        );
         return {
             ...state,
-            users: [...otherUsers, ...users],
-            status: 'success',
+            users: mergeUsers(state.users, users),
         };
     }),
 );
+
+function mergeUsers(left: UserDto[], right: UserDto[]) {
+    const map = new Map<number, UserDto>();
+    [...left, ...right].forEach((item) => {
+        const key = item.id;
+        map.set(key, { ...map.get(key), ...item });
+    });
+    return Array.from(map.values());
+}

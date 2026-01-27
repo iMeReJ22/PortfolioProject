@@ -5,7 +5,7 @@ import {
     CreateBoardRequest,
     UpdateBoardRequest,
 } from '../../models/Requests/board-requests.models';
-import { BoardDto, BoardTileDto } from '../../models/DTOs/board.model';
+import { BoardDto, BoardTileDto, DetailedBoardDto } from '../../models/DTOs/board.model';
 import { Observable, OperatorFunction } from 'rxjs';
 import { Action } from '@ngrx/store';
 
@@ -49,5 +49,8 @@ export class BoardsApiService {
     }
     getDashboardBoardTiles(userId: number): Observable<BoardTileDto[]> {
         return this.api.get<BoardTileDto[]>(`${this.endpoint}/dashboard/${userId}`);
+    }
+    getDetailedBoardById(boardId: number): Observable<DetailedBoardDto> {
+        return this.api.get<DetailedBoardDto>(`${this.endpoint}/detailed/${boardId}`);
     }
 }

@@ -1,5 +1,5 @@
 import { ApplicationConfig, provideBrowserGlobalErrorListeners, isDevMode } from '@angular/core';
-import { provideRouter } from '@angular/router';
+import { provideRouter, withComponentInputBinding } from '@angular/router';
 
 import { routes } from './app.routes';
 import { provideStore } from '@ngrx/store';
@@ -27,7 +27,7 @@ export const appConfig: ApplicationConfig = {
     providers: [
         provideHttpClient(withInterceptors([errorInterceptor, authInterceptor])),
         provideBrowserGlobalErrorListeners(),
-        provideRouter(routes),
+        provideRouter(routes, withComponentInputBinding()),
         provideStore({
             tasks: taskReducer,
             logs: logReducer,

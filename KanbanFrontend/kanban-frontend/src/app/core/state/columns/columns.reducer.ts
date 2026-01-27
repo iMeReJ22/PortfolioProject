@@ -23,7 +23,7 @@ export const columnReducer = createReducer(
             name: request.name,
             orderIndex: 9999,
             boardId: request.boardId,
-            tasks: [],
+            taskIds: [],
         };
 
         return {
@@ -36,7 +36,7 @@ export const columnReducer = createReducer(
         ...state,
         status: 'success',
         error: null,
-        column: state.columns.map((c) => (c.id === tempId ? created : c)),
+        columns: state.columns.map((c) => (c.id === tempId ? created : c)),
     })),
     on(ColumnsActions.createColumnFailure, (state, { error, tempId }) => ({
         ...state,
@@ -116,4 +116,19 @@ export const columnReducer = createReducer(
         error,
         columns: columnsBefore,
     })),
+    on(ColumnsActions.upsertColumns, (state, { columns }) => {
+        return {
+            ...state,
+            columns: mergeColumns(state.columns, columns),
+        };
+    }),
 );
+
+function mergeColumns(left: ColumnDto[], right: ColumnDto[]) {
+    const map = new Map<number, ColumnDto>();
+    [...left, ...right].forEach((item) => {
+        const key = item.id;
+        map.set(key, { ...map.get(key), ...item });
+    });
+    return Array.from(map.values());
+}

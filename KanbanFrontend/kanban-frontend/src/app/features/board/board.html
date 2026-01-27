@@ -1,1 +1,24 @@
-<p>board works!</p>
+<div class="board-container">
+    <section class="header-section">
+        <h1>Board: {{ id() }} Name: {{ thisBoard()?.name }}</h1>
+    </section>
+    <section class="columns-section">
+        <div class="columns-grid">
+            @for (column of columns(); track column.id) {
+                <app-column [thisColumn]="column" [canEdit]="canEdit()" />
+            }
+            @if (canEdit()) {
+                <button
+                    class="create-column-btn"
+                    id="create-column-btn"
+                    (click)="openCreateColumnModal()"
+                >
+                    +
+                </button>
+            }
+        </div>
+    </section>
+</div>
+@if (isCreateColumnModalOpen()) {
+    <app-column-form-modal [boardId]="thisBoard()?.id!" (hideModal)="closeCreateColumnModal()" />
+}

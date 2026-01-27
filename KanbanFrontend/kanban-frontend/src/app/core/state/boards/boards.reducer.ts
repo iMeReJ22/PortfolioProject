@@ -2,10 +2,13 @@ import { createReducer, on } from '@ngrx/store';
 import { BoardDto } from '../../models/DTOs/board.model';
 import { BoardMemberDto, compareRoles } from '../../models/DTOs/board-member.models';
 import { BoardsActions } from './boards.actions';
+import { map } from 'rxjs';
+import { TaskTypeDto } from '../../models/DTOs/task-type.model';
 
 export interface BoardState {
     boards: BoardDto[];
     boardMembers: BoardMemberDto[];
+    currentBoard: BoardDto | null;
     error: string | null;
     status: 'idle' | 'loading' | 'success' | 'error' | 'creating' | 'updating' | 'deleting';
 }
@@ -13,6 +16,7 @@ export interface BoardState {
 export const initialBoardsState: BoardState = {
     boards: [],
     boardMembers: [],
+    currentBoard: null,
     error: null,
     status: 'idle',
 };
@@ -190,18 +194,51 @@ export const boardReducer = createReducer(
     })),
 
     on(BoardsActions.upsertBoardMembers, (state, { members }) => {
-        const otherMembers = state.boardMembers.filter(
-            (existing) =>
-                !members.some(
-                    (added) =>
-                        added.userId === existing.userId && added.boardId === existing.boardId,
-                ),
-        );
-
         return {
             ...state,
-            boardMembers: [...otherMembers, ...members],
-            status: 'success',
+            boardMembers: mergeBoardMembers(state.boardMembers, members),
         };
     }),
+
+    on(BoardsActions.getDetailedBoardById, (state, { boardId }) => ({
+        ...state,
+        status: 'loading',
+        boards: state.boards,
+    })),
+    on(BoardsActions.getDetailedBoardByIdSuccess, (state, { board }) => ({
+        ...state,
+        status: 'success',
+        error: null,
+        currentBoard: board,
+        boards: mergeBoards(state.boards, [board]),
+    })),
+    on(BoardsActions.getDetailedBoardByIdFailure, (state, { error }) => ({
+        ...state,
+        status: 'error',
+        error,
+        boards: state.boards,
+    })),
 );
+
+function mergeBoardMembers(membersLeft: BoardMemberDto[], membersRight: BoardMemberDto[]) {
+    const map = new Map<string, BoardMemberDto>();
+    [...membersLeft, ...membersRight].forEach((item) => {
+        const key = `${item.boardId}_${item.userId}`;
+        map.set(key, { ...map.get(key), ...item });
+    });
+    return Array.from(map.values());
+}
+
+interface boardMemberKey {
+    boardId: number;
+    userId: number;
+}
+
+function mergeBoards(left: BoardDto[], right: BoardDto[]) {
+    const map = new Map<number, BoardDto>();
+    [...left, ...right].forEach((item) => {
+        const key = item.id;
+        map.set(key, { ...map.get(key), ...item });
+    });
+    return Array.from(map.values());
+}

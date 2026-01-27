@@ -6,5 +6,7 @@ export const LogsActions = createActionGroup({
         'Get Activity For Board': props<{ boardId: number }>(),
         'Get Activity For Board Success': props<{ logs: ActivityLogDto[] }>(),
         'Get Activity For Board Failure': props<{ error: string }>(),
+
+        'Upset Activity': props<{ logs: ActivityLogDto[] }>(),
     },
 });

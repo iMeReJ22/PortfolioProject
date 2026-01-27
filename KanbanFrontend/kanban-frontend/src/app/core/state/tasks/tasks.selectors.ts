@@ -1,5 +1,7 @@
 import { createFeatureSelector, createSelector } from '@ngrx/store';
 import { TaskState } from './tasks.reducer';
+import { TaskForColumnDto } from '../../models/DTOs/task.model';
+import { selectAllTags } from '../tags/tags.selector';
 
 export const selectTasksState = createFeatureSelector<TaskState>('tasks');
 
@@ -20,3 +22,18 @@ export const selectTasksStatus = createSelector(
     selectTasksState,
     (state: TaskState) => state.status,
 );
+
+export const selectTasksForColumn = (columnId: number) =>
+    createSelector(selectTasksState, selectAllTags, (tasksState, tags) => {
+        const tasksForColumn = tasksState.tasks
+            .filter((t) => t.columnId === columnId)
+            .map((t) => {
+                const taskWithTag: TaskForColumnDto = {
+                    ...t,
+                    tags: t.tagIds.map((id) => tags.find((tag) => tag.id === id)!),
+                    type: tasksState.typesMap.get(t.taskTypeId)!,
+                };
+                return taskWithTag;
+            });
+        return tasksForColumn;
+    });

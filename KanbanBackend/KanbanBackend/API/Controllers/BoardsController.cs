@@ -9,6 +9,7 @@ using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using KanbanBackend.Application.Boards.Queries.GetDashboardBoardsWithOwners;
+using KanbanBackend.Application.Boards.Queries.GetDetailedBoardById;
 
 namespace KanbanBackend.API.Controllers
 {
@@ -80,6 +81,12 @@ namespace KanbanBackend.API.Controllers
         public async Task<IActionResult> GetDashboardBoardsWithOwners(int userId)
         {
             var result = await _mediator.Send(new GetDashboardBoardsWithOwnersQuery(userId));
+            return Ok(result);
+        }
+        [HttpGet("detailed/{boardId}")]
+        public async Task<IActionResult> GetDetailedBoardById(int boardId)
+        {
+            var result = await _mediator.Send(new GetDetailedBoardByIdQuery(boardId));
             return Ok(result);
         }
     }

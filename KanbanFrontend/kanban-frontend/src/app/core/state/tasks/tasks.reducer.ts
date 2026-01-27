@@ -1,15 +1,18 @@
 import { createReducer, on } from '@ngrx/store';
 import { TasksActions } from './tasks.actions';
 import { TaskDto } from '../../models/DTOs/task.model';
+import { TaskTypeDto } from '../../models/DTOs/task-type.model';
 
 export interface TaskState {
     tasks: TaskDto[];
     error: string | null;
+    typesMap: Map<number, TaskTypeDto>;
     status: 'idle' | 'loading' | 'success' | 'error' | 'creating' | 'updating' | 'deleting';
 }
 
 export const initialTaskState: TaskState = {
     tasks: [],
+    typesMap: new Map<number, TaskTypeDto>(),
     error: null,
     status: 'idle',
 };
@@ -55,8 +58,8 @@ export const taskReducer = createReducer(
             title: create.title,
             description: create.description || '',
             columnId: create.columnId,
-            tags: [],
-            comments: [],
+            tagIds: [],
+            commentIds: [],
             createdByUserId: create.createdByUserId,
             createdAt: new Date(Date.now()),
             orderIndex: 9999,
@@ -208,7 +211,7 @@ export const taskReducer = createReducer(
             return state;
         }
         //TODO: when tags state is done, remove also from tags.
-        task.tags = task.tags.filter((tag) => tag.id !== tagId);
+        task.tagIds = task.tagIds.filter((id) => id !== tagId);
         return {
             ...state,
             status: 'deleting',
@@ -225,10 +228,44 @@ export const taskReducer = createReducer(
         error: error,
         tasks: state.tasks.map((t) => (t.id === taggedTask.id ? taggedTask : t)),
     })),
+
+    on(TasksActions.upsertTasks, (state, { tasks }) => {
+        return {
+            ...state,
+            tasks: mergeTasks(state.tasks, tasks),
+        };
+    }),
+
+    on(TasksActions.getTaskTypes, (state, {}) => ({
+        ...state,
+        status: 'loading',
+    })),
+    on(TasksActions.getTaskTypesSuccess, (state, { types }) => {
+        const map = new Map<number, TaskTypeDto>();
+        types.forEach((type) => {
+            map.set(type.id, type);
+        });
+
+        return { ...state, status: 'success', error: null, typesMap: map };
+    }),
+    on(TasksActions.getTaskTypesFailure, (state, { error }) => ({
+        ...state,
+        status: 'error',
+        error,
+    })),
 );
 
 function reorderTasks(tasks: TaskDto[]) {
     for (let i = 0; i < tasks.length; i++) {
         tasks[i].orderIndex = i + 1;
     }
+}
+
+function mergeTasks(left: TaskDto[], right: TaskDto[]) {
+    const map = new Map<number, TaskDto>();
+    [...left, ...right].forEach((item) => {
+        const key = item.id;
+        map.set(key, { ...map.get(key), ...item });
+    });
+    return Array.from(map.values());
 }

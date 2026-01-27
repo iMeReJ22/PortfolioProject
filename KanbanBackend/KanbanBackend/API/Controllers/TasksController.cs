@@ -11,6 +11,7 @@ using KanbanBackend.Application.Tasks.Queries.GetTaskById;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
+using KanbanBackend.Application.Tasks.Queries.GetTaskTypes;
 
 namespace KanbanBackend.API.Controllers
 {
@@ -99,6 +100,13 @@ namespace KanbanBackend.API.Controllers
         {
             await _mediator.Send(new RemoveTagFromTaskCommand(taskId, tagId));
             return NoContent();
+        }
+
+        [HttpGet("types")]
+        public async Task<IActionResult> GetTaskTypes()
+        {
+            var result = await _mediator.Send(new GetTaskTypesQuery());
+            return Ok(result);
         }
     }
 }

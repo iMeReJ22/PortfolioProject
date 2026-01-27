@@ -1,1 +1,16 @@
-<p>task-tile works!</p>
+<div class="task-tile" (click)="onTileClick()">
+    <div class="task-header">
+        <h6>{{ thisTask().title }}</h6>
+        <div class="tags">
+            @for (tag of thisTask().tags; track tag.id) {
+                <app-tag [thisTag]="tag" />
+            }
+        </div>
+    </div>
+    <div class="task-body">
+        <p>{{ thisTask().description }}</p>
+    </div>
+    <div class="task-footer">
+        <span class="date">{{ thisTask().createdAt }}</span>
+    </div>
+</div>

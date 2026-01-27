@@ -10,3 +10,6 @@ export const selectTagById = (tagId: number) =>
 
 export const selectTagsError = createSelector(selectTagsState, (state: TagState) => state.error);
 export const selectTagsStatus = createSelector(selectTagsState, (state: TagState) => state.status);
+
+export const selectTagsByIds = (tagIds: number[]) =>
+    createSelector(selectAllTags, (tags) => tags.filter((t) => tagIds.includes(t.id)));

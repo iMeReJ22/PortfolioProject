@@ -12,6 +12,10 @@ import { BoardMemberDto } from '../../models/DTOs/board-member.models';
 import { UsersActions } from '../users/users.actions';
 import { selectLoggedUser } from '../users/users.selector';
 import { ToastService } from '../../services/toast/toast.service';
+import { LogsActions } from '../activity-log/activity-log.actions';
+import { TasksActions } from '../tasks/tasks.actions';
+import { TagsActions } from '../tags/tags.actions';
+import { ColumnsActions } from '../columns/columns.actions';
 
 @Injectable()
 export class BoardsEffects {
@@ -185,6 +189,41 @@ export class BoardsEffects {
                     }),
                     catchError((error) =>
                         of(BoardsActions.getDashboardBoardTilesFailure({ error: error.message })),
+                    ),
+                ),
+            ),
+        );
+    });
+
+    getDetailedBoardById$ = createEffect(() => {
+        return this.actions$.pipe(
+            ofType(BoardsActions.getDetailedBoardById),
+            switchMap(({ boardId }) =>
+                this.boardsService.getDetailedBoardById(boardId).pipe(
+                    switchMap((board) => {
+                        console.log(board);
+                        const activityLogs = board.activityLogs;
+                        const columns = board.columns;
+                        const tasks = columns?.flatMap((c) => c.tasks);
+                        const tags = board.tags;
+                        const boardMembers = board?.boardMembers;
+                        const users = boardMembers?.flatMap((bm) => bm.users);
+                        return [
+                            BoardsActions.getDetailedBoardByIdSuccess({ board }),
+                            ...(users ? [UsersActions.upsertUsers({ users })] : []),
+                            ...(boardMembers
+                                ? [BoardsActions.upsertBoardMembers({ members: boardMembers })]
+                                : []),
+                            ...(activityLogs
+                                ? [LogsActions.upsetActivity({ logs: activityLogs })]
+                                : []),
+                            ...(tasks ? [TasksActions.upsertTasks({ tasks })] : []),
+                            ...(tags ? [TagsActions.upsertTags({ tags })] : []),
+                            ...(columns ? [ColumnsActions.upsertColumns({ columns })] : []),
+                        ];
+                    }),
+                    catchError((error) =>
+                        of(BoardsActions.getDetailedBoardByIdFailure({ error: error.message })),
                     ),
                 ),
             ),

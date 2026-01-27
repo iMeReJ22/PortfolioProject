@@ -72,3 +72,13 @@ export const selectRoleForIds = (userId: number, boardId: number) =>
         (state: BoardState) =>
             state.boardMembers.find((bm) => bm.boardId === boardId && bm.userId === userId)?.role,
     );
+
+export const selectUserRoleForBoard = (boardId: number) =>
+    createSelector(
+        selectBoardState,
+        selectUsersState,
+        (boardState: BoardState, userState: UserState) =>
+            boardState.boardMembers.find(
+                (bm) => bm.boardId === boardId && bm.userId === userState.loggedUser?.user.id,
+            )?.role,
+    );

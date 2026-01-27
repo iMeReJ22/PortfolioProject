@@ -94,4 +94,19 @@ export const tagReducer = createReducer(
             (a, b) => a.createdAt.getTime() - b.createdAt.getTime(),
         ),
     })),
+
+    on(TagsActions.upsertTags, (state, { tags }) => {
+        return {
+            ...state,
+            tags: mergeTag(state.tags, tags),
+        };
+    }),
 );
+function mergeTag(left: TagDto[], right: TagDto[]) {
+    const map = new Map<number, TagDto>();
+    [...left, ...right].forEach((item) => {
+        const key = item.id;
+        map.set(key, { ...map.get(key), ...item });
+    });
+    return Array.from(map.values());
+}

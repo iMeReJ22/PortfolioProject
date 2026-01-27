@@ -31,4 +31,19 @@ export const logReducer = createReducer(
         status: 'error',
         error: error,
     })),
+    on(LogsActions.upsetActivity, (state, { logs }) => {
+        return {
+            ...state,
+            logs: [...new Set([...state.logs, ...logs])],
+        };
+    }),
 );
+
+function mergeLogs(left: ActivityLogDto[], right: ActivityLogDto[]) {
+    const map = new Map<number, ActivityLogDto>();
+    [...left, ...right].forEach((item) => {
+        const key = item.id;
+        map.set(key, { ...map.get(key), ...item });
+    });
+    return Array.from(map.values());
+}

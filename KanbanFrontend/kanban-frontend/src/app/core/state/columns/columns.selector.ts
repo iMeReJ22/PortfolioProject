@@ -19,3 +19,7 @@ export const selectColumnsStatus = createSelector(
     selectColumnsState,
     (state: ColumnState) => state.status,
 );
+export const selectColumnsByBoardId = (boardId: number) =>
+    createSelector(selectColumnsState, (state: ColumnState) =>
+        state.columns.filter((c) => c.boardId === boardId),
+    );
