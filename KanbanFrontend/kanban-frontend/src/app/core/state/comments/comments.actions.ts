@@ -26,5 +26,7 @@ export const CommentsActions = createActionGroup({
 
         'Set Comments': props<{ comments: TaskCommentDto[] }>(),
         'Upsert Comments': props<{ comments: TaskCommentDto[] }>(),
+
+        'Local Delete Comments In Task': props<{ taskId: number }>(),
     },
 });

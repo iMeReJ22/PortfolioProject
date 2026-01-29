@@ -19,9 +19,13 @@ export class CommentsEffects {
             ofType(CommentsActions.createComment),
             concatMap(({ create, tempId }) =>
                 this.commentsService.createComment(create).pipe(
-                    map((createdComment) =>
-                        CommentsActions.createCommentSuccess({ createdComment, tempId }),
-                    ),
+                    map((createdComment) => {
+                        createdComment = {
+                            ...createdComment,
+                            createdAt: new Date(createdComment.createdAt + 'Z'),
+                        };
+                        return CommentsActions.createCommentSuccess({ createdComment, tempId });
+                    }),
                     catchError((error) =>
                         of(CommentsActions.createCommentFailure({ error: error.message, tempId })),
                     ),
@@ -35,7 +39,13 @@ export class CommentsEffects {
             ofType(CommentsActions.getCommentsForTask),
             switchMap(({ taskId }) =>
                 this.commentsService.getCommentsForTask(taskId).pipe(
-                    map((comments) => CommentsActions.getCommentsForTaskSuccess({ comments })),
+                    map((comments) => {
+                        comments = comments.map((c) => ({
+                            ...c,
+                            createdAt: new Date(c.createdAt + 'Z'),
+                        }));
+                        return CommentsActions.getCommentsForTaskSuccess({ comments });
+                    }),
                     catchError((error) =>
                         of(CommentsActions.getCommentsForTaskFailure({ error: error.message })),
                     ),

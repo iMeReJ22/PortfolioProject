@@ -13,7 +13,8 @@ namespace KanbanBackend.Application.Common.Mappings
                 .ForMember(d => d.Tags, opt => opt.MapFrom(s => s.Tags))
                 .ForMember(d => d.Members, opt => opt.MapFrom(s => s.BoardMembers));
 
-            CreateMap<BoardMember, BoardMemberDto>();
+            CreateMap<BoardMember, BoardMemberDto>()
+                .ForMember(d => d.User, opt => opt.MapFrom(s => s.User));
 
             CreateMap<Column, ColumnDto>()
                 .ForMember(d => d.Tasks, opt => opt.MapFrom(s => s.Tasks));

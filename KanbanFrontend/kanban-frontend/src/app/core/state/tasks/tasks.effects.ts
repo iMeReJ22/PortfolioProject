@@ -3,11 +3,18 @@ import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { TasksApiService } from '../../services/api/tasks';
 import { Store } from '@ngrx/store';
 import { TasksActions } from './tasks.actions';
-import { catchError, concatMap, map, mergeMap, of, switchMap } from 'rxjs';
-import { selectAllTasks, selectTaskById, selectTasksByColumnId } from './tasks.selectors';
+import { catchError, concatMap, exhaustMap, map, mergeMap, of, switchMap } from 'rxjs';
+import {
+    selectAllTasks,
+    selectTaskById,
+    selectTaskIdsByColumnId,
+    selectTasksByColumnId,
+} from './tasks.selectors';
 import { concatLatestFrom } from '@ngrx/operators';
 import { AppState } from '../app.state';
 import { TaskDto } from '../../models/DTOs/task.model';
+import { selectAllCommentIdsInTask } from '../comments/comments.selector';
+import { CommentsActions } from '../comments/comments.actions';
 
 export class TasksEffects {
     private actions$ = inject(Actions);
@@ -73,7 +80,10 @@ export class TasksEffects {
             concatLatestFrom(({ taskId }) => this.store.select(selectTaskById(taskId))),
             concatMap(([{ taskId }, deletedTask]) =>
                 this.taskService.deleteTask(taskId).pipe(
-                    map(() => TasksActions.deleteTaskSuccess()),
+                    exhaustMap(() => [
+                        CommentsActions.localDeleteCommentsInTask({ taskId }),
+                        TasksActions.deleteTaskSuccess(),
+                    ]),
                     catchError((error) =>
                         of(
                             TasksActions.deleteTaskFailure({
@@ -189,12 +199,30 @@ export class TasksEffects {
             ofType(TasksActions.getTaskTypes),
             switchMap(({}) =>
                 this.taskService.getTaskTypes().pipe(
-                    map((types) => TasksActions.getTaskTypesSuccess({ types })),
+                    map((types) => {
+                        return TasksActions.getTaskTypesSuccess({ types });
+                    }),
                     catchError((error) =>
                         of(TasksActions.getTaskTypesFailure({ error: error.message })),
                     ),
                 ),
             ),
+        );
+    });
+
+    localDeleteTasksInColumn$ = createEffect(() => {
+        return this.actions$.pipe(
+            ofType(TasksActions.localDeleteTaskInColumn),
+            concatLatestFrom(({ columnId }) =>
+                this.store.select(selectTaskIdsByColumnId(columnId)),
+            ),
+            mergeMap(([{}, deletedTaskIds]) => {
+                const commentsToDelete = deletedTaskIds.map((id) =>
+                    CommentsActions.localDeleteCommentsInTask({ taskId: id }),
+                );
+
+                return commentsToDelete;
+            }),
         );
     });
 }

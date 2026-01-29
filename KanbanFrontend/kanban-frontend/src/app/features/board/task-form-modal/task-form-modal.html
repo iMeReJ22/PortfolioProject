@@ -1,1 +1,49 @@
-<p>task-form-modal works!</p>
+<div class="modal-overlay" (click)="closeCreateTaskModal()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+            <h3>Create New Task</h3>
+            <button class="close-btn" (click)="closeCreateTaskModal()">&times;</button>
+        </div>
+        <form [formGroup]="newTaskForm" (ngSubmit)="onSubmitCreateTask()">
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="task-title">Task Title</label>
+                    <input
+                        type="text"
+                        id="task-title"
+                        formControlName="taskTitle"
+                        placeholder="New Task"
+                        class="form-control"
+                    />
+                    <label for="task-type">Task Type</label>
+                    <select id="task-type" formControlName="taskType" class="form-control">
+                        @for (item of taskTypesDict(); track item.at(0)) {
+                            <option [value]="item[0]">
+                                {{ item[1].name }}
+                            </option>
+                        }
+                    </select>
+                    <label for="task-decription">Task Description</label>
+                    <textarea
+                        id="task-decription"
+                        formControlName="taskDescription"
+                        placeholder="Task Description"
+                        class="form-control"
+                    ></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="reset" class="btn-secondary" (click)="closeCreateTaskModal()">
+                    Cancel
+                </button>
+                <button
+                    type="submit"
+                    class="btn-primary"
+                    [disabled]="newTaskForm.invalid || taskStatus() === 'creating'"
+                >
+                    {{ taskStatus() === 'creating' ? 'Creating...' : 'Create Board' }}
+                </button>
+            </div>
+        </form>
+    </div>
+</div>

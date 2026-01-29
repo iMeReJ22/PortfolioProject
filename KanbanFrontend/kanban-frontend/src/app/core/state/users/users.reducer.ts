@@ -17,8 +17,8 @@ const user = userJson ? JSON.parse(userJson) : null;
 
 export const adapter: EntityAdapter<UserDto> = createEntityAdapter<UserDto>();
 export const initialUserState: UserState = {
-    users: user ? [user] : [],
     loggedUser: token && user ? { token: token, user: user } : null,
+    users: user ? [user] : [],
     error: null,
     status: 'idle',
 };

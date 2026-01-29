@@ -8,11 +8,16 @@ export const selectAllComments = createSelector(
     (state: CommentState) => state.comments,
 );
 
+export const selectAllCommentIdsInTask = (taskId: number) =>
+    createSelector(selectAllComments, (comments) =>
+        comments.filter((c) => c.taskId === taskId).map((c) => c.id),
+    );
+
 export const selectAllCommentsForTask = (taskId: number) =>
     createSelector(selectAllComments, (comments) =>
         comments
             .filter((c) => c.taskId === taskId)
-            .sort((a, b) => a.createdAt.getTime() - b.createdAt.getTime()),
+            .sort((a, b) => a.createdAt.getSeconds() - b.createdAt.getSeconds()),
     );
 
 export const selectCommentById = (commentId: number) =>

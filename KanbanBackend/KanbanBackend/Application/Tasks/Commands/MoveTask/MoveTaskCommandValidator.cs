@@ -8,7 +8,7 @@ namespace KanbanBackend.Application.Tasks.Commands.MoveTask
         {
             RuleFor(x => x.TaskId).GreaterThan(0);
             RuleFor(x => x.TargetColumnId).GreaterThan(0);
-            RuleFor(x => x.NewOrderIndex).GreaterThanOrEqualTo(0);
+            RuleFor(x => x.NewOrderIndex).GreaterThanOrEqualTo(-1);
         }
     }
 }

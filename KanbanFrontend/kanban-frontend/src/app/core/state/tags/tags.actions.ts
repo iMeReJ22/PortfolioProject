@@ -22,5 +22,7 @@ export const TagsActions = createActionGroup({
         'Delete Tag Failure': props<{ error: string; deletedTag: TagDto }>(),
 
         'Upsert Tags': props<{ tags: TagDto[] }>(),
+
+        'Local Delete Tags In Board': props<{ boardId: number }>(),
     },
 });

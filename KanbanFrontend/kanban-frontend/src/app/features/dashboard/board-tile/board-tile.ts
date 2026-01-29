@@ -1,9 +1,9 @@
 import { Component, input, output } from '@angular/core';
 import { BoardTileDto } from '../../../core/models/DTOs/board.model';
-import { CommonModule } from '@angular/common';
+import { CommonModule, DatePipe } from '@angular/common';
 @Component({
     selector: 'app-board-tile',
-    imports: [CommonModule],
+    imports: [CommonModule, DatePipe],
     templateUrl: './board-tile.html',
     styleUrl: './board-tile.scss',
 })

@@ -11,6 +11,11 @@ export const selectAllColumns = createSelector(
 export const selectColumnById = (columnId: number) =>
     createSelector(selectAllColumns, (columns) => columns.find((c) => c.id === columnId));
 
+export const selectColumnIdsInBoard = (boardId: number) =>
+    createSelector(selectAllColumns, (columns) =>
+        columns.filter((c) => c.boardId === boardId).map((c) => c.id),
+    );
+
 export const selectColumnsError = createSelector(
     selectColumnsState,
     (state: ColumnState) => state.error,

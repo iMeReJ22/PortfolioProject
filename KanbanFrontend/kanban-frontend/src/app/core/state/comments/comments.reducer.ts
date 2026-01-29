@@ -52,7 +52,7 @@ export const commentReducer = createReducer(
         ...state,
         status: 'success',
         error: null,
-        comments: comments,
+        comments: mergeComments(state.comments, comments),
     })),
     on(CommentsActions.getCommentsForTaskFailure, (state, { error }) => ({
         ...state,
@@ -103,6 +103,10 @@ export const commentReducer = createReducer(
             comments: mergeComments(state.comments, comments),
         };
     }),
+    on(CommentsActions.localDeleteCommentsInTask, (state, { taskId }) => ({
+        ...state,
+        comments: state.comments.filter((c) => c.taskId !== taskId),
+    })),
 );
 function mergeComments(left: TaskCommentDto[], right: TaskCommentDto[]) {
     const map = new Map<number, TaskCommentDto>();

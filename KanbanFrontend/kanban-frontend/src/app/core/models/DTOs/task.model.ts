@@ -24,3 +24,7 @@ export interface TaskForColumnDto extends TaskDto {
     tags: TagDto[];
     type: TaskTypeDto;
 }
+
+export interface FullyDetailedTaskDto extends DetailedTaskDto {
+    type: TaskTypeDto;
+}

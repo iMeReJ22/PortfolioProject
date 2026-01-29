@@ -27,9 +27,9 @@ namespace KanbanBackend.Application.Columns.Commands.DeleteColumn
             if (column == null)
                 throw new NotFoundException("Board", request.Id);
 
-            await _recursive.HandleColumnsAsync([column]);
-
             await _logger.AddLogColumnAsync("Column Deleted", "deleted", request.Id);
+
+            await _recursive.HandleColumnsAsync([column]);
 
             return Unit.Value;
         }

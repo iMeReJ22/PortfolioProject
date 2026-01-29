@@ -53,5 +53,7 @@ export const TasksActions = createActionGroup({
         'Get Task Types': emptyProps(),
         'Get Task Types Success': props<{ types: TaskTypeDto[] }>(),
         'Get Task Types Failure': props<{ error: string }>(),
+
+        'Local Delete Task In Column': props<{ columnId: number }>(),
     },
 });

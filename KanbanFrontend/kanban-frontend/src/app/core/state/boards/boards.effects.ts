@@ -12,7 +12,6 @@ import { BoardMemberDto } from '../../models/DTOs/board-member.models';
 import { UsersActions } from '../users/users.actions';
 import { selectLoggedUser } from '../users/users.selector';
 import { ToastService } from '../../services/toast/toast.service';
-import { LogsActions } from '../activity-log/activity-log.actions';
 import { TasksActions } from '../tasks/tasks.actions';
 import { TagsActions } from '../tags/tags.actions';
 import { ColumnsActions } from '../columns/columns.actions';
@@ -34,6 +33,7 @@ export class BoardsEffects {
                             'Board Created!',
                             `Successfully created ${create.name}.`,
                         );
+                        created = { ...created, createdAt: new Date(created.createdAt + 'Z') };
                         return BoardsActions.createBoardSuccess({ created, tempId });
                     }),
                     catchError((error) => {
@@ -55,7 +55,10 @@ export class BoardsEffects {
             ofType(BoardsActions.getBoardById),
             switchMap(({ boardId }) =>
                 this.boardsService.getBoardById(boardId).pipe(
-                    map((board) => BoardsActions.getBoardByIdSuccess({ board })),
+                    map((board) => {
+                        board = { ...board, createdAt: new Date(board.createdAt + 'Z') };
+                        return BoardsActions.getBoardByIdSuccess({ board });
+                    }),
                     catchError((error) =>
                         of(BoardsActions.getBoardByIdFailure({ error: error.message })),
                     ),
@@ -69,7 +72,13 @@ export class BoardsEffects {
             ofType(BoardsActions.getBoardsForUser),
             switchMap(({ userId }) =>
                 this.boardsService.getBoardsForUser(userId).pipe(
-                    map((boards) => BoardsActions.getBoardsForUserSuccess({ boards })),
+                    map((boards) => {
+                        boards = boards.map((x) => ({
+                            ...x,
+                            createdAt: new Date(x.createdAt + 'Z'),
+                        }));
+                        return BoardsActions.getBoardsForUserSuccess({ boards });
+                    }),
                     catchError((error) =>
                         of(BoardsActions.getBoardsForUserFailure({ error: error.message })),
                     ),
@@ -84,7 +93,10 @@ export class BoardsEffects {
             concatLatestFrom(({ update }) => this.store.select(selectBoardById(update.boardId))),
             mergeMap(([{ boardId, update }, boardBefore]) =>
                 this.boardsService.updateBoard(boardId, update).pipe(
-                    map((board) => BoardsActions.updateBoardSuccess({ board })),
+                    map((board) => {
+                        board = { ...board, createdAt: new Date(board.createdAt + 'Z') };
+                        return BoardsActions.updateBoardSuccess({ board });
+                    }),
                     catchError((error) =>
                         of(
                             BoardsActions.updateBoardFailure({
@@ -104,9 +116,14 @@ export class BoardsEffects {
             concatLatestFrom(({ boardId }) => this.store.select(selectBoardById(boardId))),
             concatMap(([{ boardId }, deletedBoard]) =>
                 this.boardsService.deleteBoard(boardId).pipe(
-                    map(() => {
+                    switchMap(() => {
                         this.toast.success('Board Deleted!', 'Successfully deleted the board.');
-                        return BoardsActions.deleteBoardSuccess();
+
+                        return [
+                            ColumnsActions.localDeleteColumnsInBoard({ boardId }),
+                            TagsActions.localDeleteTagsInBoard({ boardId }),
+                            BoardsActions.deleteBoardSuccess(),
+                        ];
                     }),
                     catchError((error) => {
                         this.toast.error(
@@ -176,7 +193,10 @@ export class BoardsEffects {
                     switchMap((tiles) => {
                         const usersToUpsert = tiles.map((t) => t.owner);
                         const membersToUpsert = tiles.flatMap((t) => t.boardMembers ?? []);
-
+                        tiles = tiles.map((x) => ({
+                            ...x,
+                            createdAt: new Date(x.createdAt + 'Z'),
+                        }));
                         return [
                             UsersActions.upsertUsers({
                                 users: usersToUpsert,
@@ -195,27 +215,30 @@ export class BoardsEffects {
         );
     });
 
+    //TODO finish the fucking .map((x) => ({ ...x, createdAt: new Date(x.createdAt + 'Z') })); thing ...
     getDetailedBoardById$ = createEffect(() => {
         return this.actions$.pipe(
             ofType(BoardsActions.getDetailedBoardById),
             switchMap(({ boardId }) =>
                 this.boardsService.getDetailedBoardById(boardId).pipe(
                     switchMap((board) => {
-                        console.log(board);
-                        const activityLogs = board.activityLogs;
                         const columns = board.columns;
-                        const tasks = columns?.flatMap((c) => c.tasks);
-                        const tags = board.tags;
-                        const boardMembers = board?.boardMembers;
-                        const users = boardMembers?.flatMap((bm) => bm.users);
+                        const tasks = columns
+                            ?.flatMap((c) => c.tasks)
+                            .map((x) => ({ ...x, createdAt: new Date(x.createdAt + 'Z') }));
+                        const tags = board.tags.map((x) => ({
+                            ...x,
+                            createdAt: new Date(x.createdAt + 'Z'),
+                        }));
+                        const members = board?.members;
+                        const users = members
+                            ?.map((bm) => bm.user)
+                            .map((x) => ({ ...x, createdAt: new Date(x.createdAt + 'Z') }));
                         return [
                             BoardsActions.getDetailedBoardByIdSuccess({ board }),
-                            ...(users ? [UsersActions.upsertUsers({ users })] : []),
-                            ...(boardMembers
-                                ? [BoardsActions.upsertBoardMembers({ members: boardMembers })]
-                                : []),
-                            ...(activityLogs
-                                ? [LogsActions.upsetActivity({ logs: activityLogs })]
+                            ...(users.length > 0 ? [UsersActions.upsertUsers({ users })] : []),
+                            ...(members
+                                ? [BoardsActions.upsertBoardMembers({ members: members })]
                                 : []),
                             ...(tasks ? [TasksActions.upsertTasks({ tasks })] : []),
                             ...(tags ? [TagsActions.upsertTags({ tags })] : []),

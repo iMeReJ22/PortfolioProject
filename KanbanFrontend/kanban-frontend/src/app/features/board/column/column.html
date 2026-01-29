@@ -6,12 +6,23 @@
         <button class="delete-btn" (click)="onDeleteColumn($event)">🗑️</button>
     }
     <section class="tasks-section">
-        <div class="tasks-tiles">
+        <div
+            class="tasks-tiles"
+            cdkDropList
+            [cdkDropListData]="tasks()"
+            (cdkDropListDropped)="onTaskDrop($event)"
+        >
             @if (canEdit()) {
-                <button class="create-task-btn">+</button>
+                <button class="create-task-btn" (click)="onCreateTask()">+</button>
             }
             @for (task of tasks(); track task.id) {
-                <app-task-tile [thisTask]="task" [canEdit]="canEdit()" />
+                <app-task-tile
+                    cdkDrag
+                    [cdkDragData]="task"
+                    [thisTask]="task"
+                    [canEdit]="canEdit()"
+                    (tileClick)="onClickedTile($event)"
+                />
             }
         </div>
     </section>

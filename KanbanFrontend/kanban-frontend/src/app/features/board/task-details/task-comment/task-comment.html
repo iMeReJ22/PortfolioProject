@@ -1,0 +1,11 @@
+<div class="comment-container">
+    <div class="comment-header">
+        <span class="creator">{{ thisComment().authorName }}</span>
+    </div>
+    <div class="comment-body">
+        <p>{{ thisComment().content }}</p>
+    </div>
+    <div class="comment-footer">
+        <span class="date">{{ thisComment().createdAt | date: 'dd.MM.yyyy HH:mm' }}</span>
+    </div>
+</div>

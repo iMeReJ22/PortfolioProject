@@ -9,7 +9,7 @@
         <p class="description">{{ boardTile().description }}</p>
     </div>
     <div class="tile-footer">
-        <span class="date"> {{ boardTile().createdAt }}</span>
+        <span class="date"> {{ boardTile().createdAt | date: 'shortDate' }}</span>
         <span class="owner">{{ boardTile().owner.displayName }}</span>
     </div>
 </div>

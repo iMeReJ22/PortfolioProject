@@ -1,24 +1,41 @@
 <div class="board-container">
-    <section class="header-section">
-        <h1>Board: {{ id() }} Name: {{ thisBoard()?.name }}</h1>
-    </section>
-    <section class="columns-section">
-        <div class="columns-grid">
-            @for (column of columns(); track column.id) {
-                <app-column [thisColumn]="column" [canEdit]="canEdit()" />
-            }
-            @if (canEdit()) {
-                <button
-                    class="create-column-btn"
-                    id="create-column-btn"
-                    (click)="openCreateColumnModal()"
-                >
-                    +
-                </button>
-            }
-        </div>
-    </section>
+    <div class="main-board-area">
+        <section class="header-section">
+            <h1>Board: {{ id() }} Name: {{ thisBoard()?.name }}</h1>
+        </section>
+        <section class="columns-section">
+            <div class="columns-grid" cdkDropListGroup>
+                @for (column of columns(); track column.id) {
+                    <app-column
+                        [thisColumn]="column"
+                        [canEdit]="canEdit()"
+                        (openCreateTaskModal)="openCreateTaskModal($event)"
+                        (deleteRequest)="deleteColumn($event)"
+                        (clickedTileEvent)="openTaskDetails($event)"
+                    />
+                }
+                @if (canEdit()) {
+                    <button
+                        class="create-column-btn"
+                        id="create-column-btn"
+                        (click)="openCreateColumnModal()"
+                    >
+                        +
+                    </button>
+                }
+            </div>
+        </section>
+    </div>
+    @if (isTaskDetailsOpen()) {
+        <app-task-details
+            [taskId]="lastClickedTaskId()"
+            (closeTaskDetailsEvent)="closeTaskDetails()"
+        />
+    }
 </div>
 @if (isCreateColumnModalOpen()) {
-    <app-column-form-modal [boardId]="thisBoard()?.id!" (hideModal)="closeCreateColumnModal()" />
+    <app-column-form-modal [boardId]="thisBoard()?.id!" (closeModal)="closeCreateColumnModal()" />
+}
+@if (isCreateTaskModalOpen()) {
+    <app-task-form-modal [columnId]="createTaskColumnId()" (closeModal)="closeCreateTaskModal()" />
 }

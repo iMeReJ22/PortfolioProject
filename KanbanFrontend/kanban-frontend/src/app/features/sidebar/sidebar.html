@@ -3,7 +3,7 @@
         <aside class="sidebar-container">
             <div class="brand">
                 <h2>Kanban App</h2>
-                <button class="hide-sidebar-btn" (click)="hideSidebar()">HIDE SIDEBAR</button>
+                <button class="hide-sidebar-btn" (click)="hideSidebar()">x</button>
             </div>
             <nav class="menu">
                 <a routerLink="/dashboard" routerLinkActive="active">Dashboard</a>
@@ -16,6 +16,6 @@
             </div>
         </aside>
     } @else {
-        <button class="show-sidebar-btn" (click)="showSidebar()">SHOW SIDEBAR</button>
+        <button class="show-sidebar-btn" (click)="showSidebar()">>></button>
     }
 }

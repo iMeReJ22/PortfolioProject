@@ -1,0 +1,150 @@
+$text-main: #2c3e50;
+$text-muted: #7f8c8d;
+$primary-blue: #4a90e2;
+$border-light: #edf2f7;
+
+.task-details {
+    width: 400px;
+    flex-shrink: 0;
+    background-color: white;
+    border-left: 1px solid #ddd;
+    padding-left: 1rem;
+    height: 100%;
+    z-index: 100;
+    box-shadow: -5px 0 15px rgba(0, 0, 0, 0.05);
+    animation: slideIn 0.3s ease-out;
+
+    .task-header {
+        position: relative;
+        margin-bottom: 1.5rem;
+        padding-top: 10px;
+
+        .close-detail-btn {
+            position: relative;
+            background: none;
+            border: 1px solid grey;
+            border-radius: 4px;
+            padding: 4px 8px;
+            font-size: 1.2rem;
+            color: $text-muted;
+            cursor: pointer;
+            &:hover {
+                color: $text-main;
+            }
+        }
+
+        h2 {
+            margin: 0.5rem 0;
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: $text-main;
+            padding: 0.5rem 0rem 0.5rem 1rem;
+            border-radius: 1rem 0 0 1rem;
+            background-color: lightblue;
+        }
+
+        .date {
+            display: block;
+            font-size: 0.75rem;
+            color: #7c7f81;
+        }
+    }
+
+    .task-tags {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        margin-bottom: 1.5rem;
+        align-items: center;
+
+        .add-tag-btn {
+            background: $border-light;
+            border: 1px dashed darken($border-light, 10%);
+            border-radius: 4px;
+            padding: 0.1rem 0.5rem;
+            cursor: pointer;
+            color: $text-muted;
+            &:hover {
+                border-color: $primary-blue;
+                color: $primary-blue;
+            }
+        }
+    }
+
+    .task-description {
+        background: #fcfcfc;
+        border-radius: 8px;
+        padding: 1rem;
+        margin-bottom: 2rem;
+        border-left: 4px solid $border-light;
+
+        p {
+            margin: 0;
+            font-size: 0.95rem;
+            line-height: 1.6;
+            color: lighten($text-main, 10%);
+        }
+    }
+
+    .task-comments {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+        border-top: 1px solid $border-light;
+        padding-top: 1.5rem;
+
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+
+            .new-comment-textarea {
+                width: 100%;
+                min-height: 80px;
+                padding: 0.75rem;
+                border: 1px solid $border-light;
+                border-radius: 8px;
+                resize: vertical;
+                font-family: inherit;
+                font-size: 0.9rem;
+                &:focus {
+                    outline: none;
+                    border-color: $primary-blue;
+                }
+            }
+
+            .submit-btn {
+                align-self: flex-end;
+                background: $primary-blue;
+                color: white;
+                border: none;
+                padding: 0.5rem 1.2rem;
+                border-radius: 6px;
+                font-weight: 600;
+                cursor: pointer;
+                transition: 0.2s;
+
+                &:disabled {
+                    background: #bdc3c7;
+                    cursor: not-allowed;
+                }
+
+                &:not(:disabled):hover {
+                    background: darken($primary-blue, 10%);
+                }
+            }
+        }
+    }
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translate(0);
+        opacity: 1;
+    }
+}

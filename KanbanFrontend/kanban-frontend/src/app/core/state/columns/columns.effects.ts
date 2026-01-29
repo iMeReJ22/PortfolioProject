@@ -3,11 +3,12 @@ import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
 import { AppState } from '../app.state';
 import { ColumnsApiService } from '../../services/api/columns';
-import { catchError, concatMap, map, of, switchMap } from 'rxjs';
+import { catchError, concatMap, map, mergeMap, of, switchMap, tap } from 'rxjs';
 import { ColumnsActions } from './columns.actions';
 import { concatLatestFrom } from '@ngrx/operators';
-import { selectAllColumns, selectColumnById } from './columns.selector';
+import { selectAllColumns, selectColumnById, selectColumnIdsInBoard } from './columns.selector';
 import { ColumnDto } from '../../models/DTOs/column.model';
+import { TasksActions } from '../tasks/tasks.actions';
 
 export class ColumnsEffects {
     private actions$ = inject(Actions);
@@ -68,7 +69,10 @@ export class ColumnsEffects {
             concatLatestFrom(({ columnId }) => this.store.select(selectColumnById(columnId))),
             concatMap(([{ columnId }, deletedColumn]) =>
                 this.columnsService.deleteColumn(columnId).pipe(
-                    map(() => ColumnsActions.deleteColumnSuccess()),
+                    switchMap(() => [
+                        TasksActions.localDeleteTaskInColumn({ columnId }),
+                        ColumnsActions.deleteColumnSuccess(),
+                    ]),
                     catchError((error) =>
                         of(
                             ColumnsActions.deleteColumnFailure({
@@ -99,6 +103,19 @@ export class ColumnsEffects {
                     ),
                 ),
             ),
+        );
+    });
+
+    localDeleteColumnsInBoard$ = createEffect(() => {
+        return this.actions$.pipe(
+            ofType(ColumnsActions.localDeleteColumnsInBoard),
+            concatLatestFrom(({ boardId }) => this.store.select(selectColumnIdsInBoard(boardId))),
+            mergeMap(([{}, deletedIds]) => {
+                const tasksToDelete = deletedIds.map((id) =>
+                    TasksActions.localDeleteTaskInColumn({ columnId: id }),
+                );
+                return tasksToDelete;
+            }),
         );
     });
 }

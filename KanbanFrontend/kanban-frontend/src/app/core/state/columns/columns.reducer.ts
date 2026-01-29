@@ -122,6 +122,11 @@ export const columnReducer = createReducer(
             columns: mergeColumns(state.columns, columns),
         };
     }),
+
+    on(ColumnsActions.localDeleteColumnsInBoard, (state, { boardId }) => ({
+        ...state,
+        columns: state.columns.filter((c) => c.boardId !== boardId),
+    })),
 );
 
 function mergeColumns(left: ColumnDto[], right: ColumnDto[]) {

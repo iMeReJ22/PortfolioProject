@@ -101,6 +101,10 @@ export const tagReducer = createReducer(
             tags: mergeTag(state.tags, tags),
         };
     }),
+    on(TagsActions.localDeleteTagsInBoard, (state, { boardId }) => ({
+        ...state,
+        tags: state.tags.filter((t) => t.boardId !== boardId),
+    })),
 );
 function mergeTag(left: TagDto[], right: TagDto[]) {
     const map = new Map<number, TagDto>();

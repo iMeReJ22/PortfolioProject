@@ -3,6 +3,8 @@ using KanbanBackend.Application.Common.Interfaces;
 using KanbanBackend.Application.Tasks.Commands.ReorderTasks;
 using KanbanBackend.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
+using AsyncTask = System.Threading.Tasks.Task;
+using Task = KanbanBackend.Domain.Entities.Task;
 
 namespace KanbanBackend.Infrastructure.Persistance.Repositories
 {
@@ -13,13 +15,13 @@ namespace KanbanBackend.Infrastructure.Persistance.Repositories
         {
             _db = db;
         }
-        public async System.Threading.Tasks.Task AddAsync(Domain.Entities.Task task)
+        public async AsyncTask AddAsync(Task task)
         {
             _db.Tasks.Add(task);
             await _db.SaveChangesAsync();
         }
 
-        public async System.Threading.Tasks.Task AssignTagAsync(int taskId, int tagId)
+        public async AsyncTask AssignTagAsync(int taskId, int tagId)
         {
             var tag = await _db.Tags.FirstAsync(t => t.Id == tagId);
 
@@ -32,19 +34,19 @@ namespace KanbanBackend.Infrastructure.Persistance.Repositories
             await _db.SaveChangesAsync();
         }
 
-        public async System.Threading.Tasks.Task DeleteAsync(Domain.Entities.Task task)
+        public async AsyncTask DeleteAsync(Task task)
         {
             task.Tags.Clear();
             _db.Tasks.Remove(task);
             await _db.SaveChangesAsync();
         }
 
-        public async Task<Domain.Entities.Task?> GetByIdAsync(int id)
+        public async Task<Task?> GetByIdAsync(int id)
         {
             return await _db.Tasks.FirstAsync(t=> t.Id == id);
         }
 
-        public async Task<IReadOnlyCollection<Domain.Entities.Task>> GetForBoardAsync(int boardId)
+        public async Task<IReadOnlyCollection<Task>> GetForBoardAsync(int boardId)
         {
             return await _db.Tasks
                 .Where(t => t.Column.BoardId == boardId)
@@ -53,7 +55,7 @@ namespace KanbanBackend.Infrastructure.Persistance.Repositories
                 .ToListAsync();
         }
 
-        public async Task<IReadOnlyCollection<Domain.Entities.Task>> GetForColumnAsync(int column)
+        public async Task<IReadOnlyCollection<Task>> GetForColumnAsync(int column)
         {
             return await _db.Tasks
                 .Where(t => t.ColumnId == column)
@@ -70,33 +72,63 @@ namespace KanbanBackend.Infrastructure.Persistance.Repositories
             return maxOrder + 1;
         }
 
-        public async System.Threading.Tasks.Task MoveAsync(Domain.Entities.Task task, int newColumnId, int newOrderIndex)
+        public async AsyncTask MoveAsync(Task task, int newColumnId, int newOrderIndex)
         {
-
-            if (task.ColumnId != newColumnId){
-                var oldColumnTasks = await _db.Tasks
-                    .Where(t => t.ColumnId == task.ColumnId && t.Id != task.Id)
+            if(task.ColumnId == newColumnId)
+            {
+                var columnTasks = await _db.Tasks
+                    .Where(t => t.ColumnId == task.ColumnId)
                     .OrderBy(t => t.OrderIndex)
                     .ToListAsync();
 
-                ReorderTasks(oldColumnTasks);
-            }
+                var toUpdateTasks = MoveSameColumn(columnTasks, newOrderIndex, task);
 
-            var newColumnTasks = await _db.Tasks
-                .Where(t => t.ColumnId == newColumnId && t.Id != task.Id)
-                .OrderBy(t => t.OrderIndex)
-                .ToListAsync();
+                _db.Tasks.UpdateRange(toUpdateTasks);
+            } else
+            {
+                var oldColumnTasks = await _db.Tasks
+                    .Where(t => t.ColumnId == task.ColumnId)
+                    .OrderBy(t => t.OrderIndex)
+                    .ToListAsync();
 
-            if(task.ColumnId != newColumnId)
+                var newColumnTasks = await _db.Tasks
+                    .Where(t => t.ColumnId == newColumnId)
+                    .OrderBy(t => t.OrderIndex)
+                    .ToListAsync();
+
                 task.ColumnId = newColumnId;
-            
-            newColumnTasks.Insert(newOrderIndex-1, task);
-            ReorderTasks(newColumnTasks);
+
+                var toUpdateTasks = MoveDifferntColumns(oldColumnTasks, newColumnTasks, newOrderIndex, task);
+
+                _db.Tasks.UpdateRange(toUpdateTasks);
+            }
 
             await _db.SaveChangesAsync();
         }
 
-        public async System.Threading.Tasks.Task RemoveTagAsync(int taskId, int tagId)
+        private  IList<Task> MoveSameColumn(IList<Task> columnTasks, int newOrderIndex, Task task)
+        {
+            columnTasks.Remove(task);
+            columnTasks.Insert(newOrderIndex, task);
+            ReorderTasks(columnTasks);
+
+            return columnTasks;
+        }
+
+        private IList<Task> MoveDifferntColumns(IList<Task> oldColumnTasks, IList<Task> newColumnTasks, int newOrderIndex, Task task)
+        {
+            oldColumnTasks.Remove(task);
+            ReorderTasks(oldColumnTasks);
+
+            newColumnTasks.Insert(newOrderIndex, task);
+            ReorderTasks(newColumnTasks);
+
+            oldColumnTasks.Concat(newColumnTasks);
+
+            return oldColumnTasks;
+        }
+
+        public async AsyncTask RemoveTagAsync(int taskId, int tagId)
         {
             var task = await _db.Tasks
                 .Include(t => t.Tags)
@@ -108,7 +140,7 @@ namespace KanbanBackend.Infrastructure.Persistance.Repositories
             await _db.SaveChangesAsync();
         }
 
-        public async System.Threading.Tasks.Task ReorderAsync(int columnId, IReadOnlyCollection<Domain.Entities.Task> tasks)
+        public async AsyncTask ReorderAsync(int columnId, IReadOnlyCollection<Task> tasks)
         {
             var columnTasks = await _db.Tasks
                 .Where(t => t.ColumnId == columnId)
@@ -124,15 +156,16 @@ namespace KanbanBackend.Infrastructure.Persistance.Repositories
             await _db.SaveChangesAsync();
         }
 
-        private void ReorderTasks(IList<Domain.Entities.Task> tasks)
+        private void ReorderTasks(IList<Task> tasks)
         {
-            for (int i = 0; i < tasks.Count; i++)
+            int i = 0;
+            foreach (var task in tasks)
             {
-                tasks[i].OrderIndex = i+1;
+                task.OrderIndex = i++;
             }
         }
 
-        public async System.Threading.Tasks.Task UpdateAsync(Domain.Entities.Task task)
+        public async AsyncTask UpdateAsync(Task task)
         {
             _db.Tasks.Update(task);
             await _db.SaveChangesAsync();
@@ -143,13 +176,13 @@ namespace KanbanBackend.Infrastructure.Persistance.Repositories
             return await _db.Tasks.MaxAsync(t => (int?)t.Id) ?? 0;
         }
 
-        public async System.Threading.Tasks.Task DeleteRangeAsync(IEnumerable<Domain.Entities.Task> task)
+        public async AsyncTask DeleteRangeAsync(IEnumerable<Task> task)
         {
             _db.Tasks.RemoveRange(task);
             await _db.SaveChangesAsync();
         }
 
-        public async Task<Domain.Entities.Task?> GetTaskAsync(int id)
+        public async Task<Task?> GetTaskAsync(int id)
         {
             return await _db.Tasks
                 .Include(t => t.Tags)

@@ -1,0 +1,95 @@
+$column-width: 300px;
+$column-bg: #f4f7f9;
+$primary-blue: #4a90e2;
+$text-dark: #2c3e50;
+
+.column-container {
+    width: $column-width;
+    min-width: $column-width;
+    background-color: $column-bg;
+    border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+    max-height: 100%; // Ważne dla przewijania wewnątrz kolumny
+    position: relative;
+    border: 1px solid rgba(0, 0, 0, 0.05);
+
+    .name-section {
+        padding: 1.25rem 1rem;
+
+        .name-header {
+            margin: 0;
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: $text-dark;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            padding-right: 30px;
+        }
+    }
+
+    .delete-btn {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        background: #fff0f0;
+        border: 1px solid #ffccc7;
+        color: #ff4d4f;
+        padding: 4px 8px;
+        border-radius: 4px;
+        cursor: pointer;
+        opacity: 0;
+        transition: 0.2s;
+
+        &:hover {
+            background: #ff4d4f;
+            color: white;
+        }
+    }
+
+    &:hover .delete-btn {
+        opacity: 1;
+    }
+
+    .tasks-section {
+        flex: 1;
+        overflow-y: auto; // Pozwala przewijać tylko listę zadań
+        padding: 0 0.75rem 1rem 0.75rem;
+
+        // Stylizacja paska przewijania (scrollbar)
+        &::-webkit-scrollbar {
+            width: 6px;
+        }
+        &::-webkit-scrollbar-thumb {
+            background-color: rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+        }
+
+        .tasks-tiles {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+    }
+
+    .create-task-btn {
+        width: 100%;
+        padding: 0.75rem;
+        background: transparent;
+        border: 2px dashed #cbd5e0;
+        border-radius: 8px;
+        color: #718096;
+        font-size: 1.2rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s;
+        margin-bottom: 0.25rem;
+
+        &:hover {
+            background: rgba($primary-blue, 0.05);
+            border-color: $primary-blue;
+            color: $primary-blue;
+        }
+    }
+}

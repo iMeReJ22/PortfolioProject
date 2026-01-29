@@ -11,6 +11,6 @@
         <p>{{ thisTask().description }}</p>
     </div>
     <div class="task-footer">
-        <span class="date">{{ thisTask().createdAt }}</span>
+        <span class="date">{{ thisTask().createdAt | date: 'shortDate' }}</span>
     </div>
 </div>

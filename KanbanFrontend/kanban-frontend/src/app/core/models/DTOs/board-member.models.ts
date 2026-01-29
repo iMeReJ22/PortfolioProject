@@ -19,5 +19,5 @@ export function compareRoles(a: BoardMemberDto, b: BoardMemberDto) {
 }
 
 export interface DetailedBoardMemberDto extends BoardMemberDto {
-    users: UserDto[];
+    user: UserDto;
 }

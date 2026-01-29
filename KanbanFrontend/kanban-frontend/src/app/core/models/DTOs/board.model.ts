@@ -22,7 +22,7 @@ export interface BoardTileDto {
 }
 
 export interface DetailedBoardDto extends BoardDto {
-    boardMembers: DetailedBoardMemberDto[];
+    members: DetailedBoardMemberDto[];
     columns: DetailedColumnDto[];
     activityLogs: ActivityLogDto[];
     tags: TagDto[];

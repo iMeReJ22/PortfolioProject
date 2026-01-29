@@ -5,7 +5,7 @@ import { Store } from '@ngrx/store';
 import { AppState } from '../app.state';
 import { catchError, concatMap, exhaustMap, map, mergeMap, of, switchMap, tap } from 'rxjs';
 import { UsersActions } from './users.actions';
-import { selectLoggedData, selectUserById } from './users.selector';
+import { selectUserById } from './users.selector';
 import { concatLatestFrom } from '@ngrx/operators';
 import { UserDto } from '../../models/DTOs/user.model';
 import { Router } from '@angular/router';

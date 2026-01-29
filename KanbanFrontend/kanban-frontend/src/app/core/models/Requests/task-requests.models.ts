@@ -9,7 +9,7 @@ export interface RemoveTagFromTaskRequest {
 export interface CreateTaskRequest {
     columnId: number;
     title: string;
-    description?: string;
+    description: string;
     taskTypeId: number;
     createdByUserId: number;
 }

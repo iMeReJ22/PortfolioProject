@@ -6,13 +6,13 @@ import { TaskTypeDto } from '../../models/DTOs/task-type.model';
 export interface TaskState {
     tasks: TaskDto[];
     error: string | null;
-    typesMap: Map<number, TaskTypeDto>;
+    typesDict: { [id: number]: TaskTypeDto };
     status: 'idle' | 'loading' | 'success' | 'error' | 'creating' | 'updating' | 'deleting';
 }
 
 export const initialTaskState: TaskState = {
     tasks: [],
-    typesMap: new Map<number, TaskTypeDto>(),
+    typesDict: {},
     error: null,
     status: 'idle',
 };
@@ -147,26 +147,30 @@ export const taskReducer = createReducer(
             return state;
         }
 
-        if (task.columnId != move.targetColumnId) {
-            const oldColumnTasks = state.tasks
-                .filter((t) => t.columnId == task.columnId && t.id !== move.taskId)
-                .sort((a, b) => a.orderIndex - b.orderIndex);
-            reorderTasks(oldColumnTasks);
-        }
-
-        const newColumnTasks = state.tasks
-            .filter((t) => t.columnId == move.targetColumnId && t.id !== move.taskId)
-            .sort((a, b) => a.orderIndex - b.orderIndex);
-
-        if (task.columnId != move.targetColumnId) task.columnId = move.targetColumnId;
-
-        newColumnTasks.splice(move.newOrderIndex - 1, 0, task);
-        reorderTasks(newColumnTasks);
+        const tasksToUpdate = () => {
+            if (task.columnId === move.targetColumnId) {
+                var columnTasks = state.tasks
+                    .filter((t) => t.columnId === move.targetColumnId)
+                    .sort((a, b) => a.orderIndex - b.orderIndex);
+                return moveSameColumn(columnTasks, move.newOrderIndex, task);
+            } else {
+                var oldColumnTasks = state.tasks
+                    .filter((t) => t.columnId === task.columnId)
+                    .sort((a, b) => a.orderIndex - b.orderIndex);
+                var newColumnTasks = state.tasks
+                    .filter((t) => t.columnId === move.targetColumnId)
+                    .sort((a, b) => a.orderIndex - b.orderIndex);
+                return moveDifferentColumns(oldColumnTasks, newColumnTasks, move.newOrderIndex, {
+                    ...task,
+                    columnId: move.targetColumnId,
+                });
+            }
+        };
 
         return {
             ...state,
             status: 'updating',
-            tasks: newColumnTasks,
+            tasks: mergeTasks(state.tasks, tasksToUpdate()),
         };
     }),
     on(TasksActions.moveTaskSuccess, (state) => ({
@@ -177,7 +181,7 @@ export const taskReducer = createReducer(
         ...state,
         status: 'error',
         error: error,
-        tasks: unmovedTasks,
+        tasks: mergeTasks(state.tasks, unmovedTasks),
     })),
 
     on(TasksActions.assignTagToTask, (state, { taskId, assign }) => {
@@ -241,24 +245,30 @@ export const taskReducer = createReducer(
         status: 'loading',
     })),
     on(TasksActions.getTaskTypesSuccess, (state, { types }) => {
-        const map = new Map<number, TaskTypeDto>();
+        const dict: { [id: number]: TaskTypeDto } = {};
         types.forEach((type) => {
-            map.set(type.id, type);
+            dict[type.id] = type;
         });
 
-        return { ...state, status: 'success', error: null, typesMap: map };
+        return { ...state, status: 'success', error: null, typesDict: dict };
     }),
     on(TasksActions.getTaskTypesFailure, (state, { error }) => ({
         ...state,
         status: 'error',
         error,
     })),
+    on(TasksActions.localDeleteTaskInColumn, (state, { columnId }) => ({
+        ...state,
+        tasks: state.tasks.filter((t) => t.columnId !== columnId),
+    })),
 );
 
 function reorderTasks(tasks: TaskDto[]) {
-    for (let i = 0; i < tasks.length; i++) {
-        tasks[i].orderIndex = i + 1;
-    }
+    let i = 0;
+    const reorderedTasks = tasks.map((t) => {
+        return { ...t, orderIndex: i++ };
+    });
+    return reorderedTasks;
 }
 
 function mergeTasks(left: TaskDto[], right: TaskDto[]) {
@@ -268,4 +278,23 @@ function mergeTasks(left: TaskDto[], right: TaskDto[]) {
         map.set(key, { ...map.get(key), ...item });
     });
     return Array.from(map.values());
+}
+
+function moveSameColumn(columnTasks: TaskDto[], newOrderIndex: number, task: TaskDto) {
+    columnTasks = columnTasks.filter((t) => t.id !== task.id);
+    columnTasks.splice(newOrderIndex, 0, task!);
+
+    return reorderTasks(columnTasks);
+}
+
+function moveDifferentColumns(
+    oldColumnTasks: TaskDto[],
+    newColumnTasks: TaskDto[],
+    newOrderIndex: number,
+    task: TaskDto,
+) {
+    oldColumnTasks = oldColumnTasks.filter((t) => t.id !== task.id);
+    newColumnTasks.splice(newOrderIndex, 0, task!);
+
+    return mergeTasks(reorderTasks(oldColumnTasks), reorderTasks(newColumnTasks));
 }

@@ -30,5 +30,7 @@ export const ColumnsActions = createActionGroup({
         'Reorder Columns Failure': props<{ error: string; columnsBefore: ColumnDto[] }>(),
 
         'Upsert Columns': props<{ columns: ColumnDto[] }>(),
+
+        'Local Delete Columns In Board': props<{ boardId: number }>(),
     },
 });

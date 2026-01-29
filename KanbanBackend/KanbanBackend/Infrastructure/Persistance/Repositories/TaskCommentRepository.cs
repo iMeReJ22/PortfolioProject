@@ -40,6 +40,7 @@ namespace KanbanBackend.Infrastructure.Persistance.Repositories
         {
             return await _db.TaskComments
                 .Where(c => c.TaskId == taskId)
+                .Include(c => c.Author)
                 .ToListAsync();
         }
 

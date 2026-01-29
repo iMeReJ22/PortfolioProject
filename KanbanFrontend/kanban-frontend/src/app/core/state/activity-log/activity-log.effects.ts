@@ -17,7 +17,10 @@ export class ActivityLogEffects {
             ofType(LogsActions.getActivityForBoard),
             mergeMap(({ boardId }) =>
                 this.logsService.getActivityForBoard(boardId).pipe(
-                    map((logs) => LogsActions.getActivityForBoardSuccess({ logs })),
+                    map((logs) => {
+                        logs = logs.map((x) => ({ ...x, createdAt: new Date(x.createdAt + 'Z') }));
+                        return LogsActions.getActivityForBoardSuccess({ logs });
+                    }),
                     catchError((error) =>
                         of(LogsActions.getActivityForBoardFailure({ error: error.message })),
                     ),

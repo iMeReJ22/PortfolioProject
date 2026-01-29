@@ -16,10 +16,10 @@ export class ColumnFormModal {
 
     boardId = input.required<number>();
 
-    hideModal = output<void>();
+    closeModal = output<void>();
     closeCreateColumnModal() {
         this.newColumnForm.reset();
-        this.hideModal.emit();
+        this.closeModal.emit();
     }
 
     newColumnForm = this.fb.group({
@@ -27,7 +27,6 @@ export class ColumnFormModal {
     });
     columnsStatus = this.store.selectSignal(selectColumnsStatus);
     onSubmitCreateColumn() {
-        console.log(this.newColumnForm.getRawValue());
         this.store.dispatch(
             ColumnsActions.createColumn({
                 request: {

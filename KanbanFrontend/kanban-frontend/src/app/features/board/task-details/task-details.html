@@ -1,1 +1,37 @@
-<p>task-details works!</p>
+<aside class="task-details">
+    <div class="task-header">
+        <button class="close-detail-btn" (click)="closeTaskDetails()">X</button>
+        <h2>{{ thisTask().title }}</h2>
+        <span class="date">{{ thisTask().createdAt | date: 'dd.MM.yyyy HH:mm' }}</span>
+    </div>
+    <div class="task-tags">
+        @for (tag of thisTask().tags; track tag.id) {
+            <app-tag [thisTag]="tag" />
+        }
+        <button class="add-tag-btn">+</button>
+    </div>
+    <div class="task-description">
+        <p>{{ thisTask().description }}</p>
+    </div>
+    <div class="task-comments">
+        <form [formGroup]="newCommentForm" (ngSubmit)="onSubmitCommentForm()">
+            <label for="new-comment-textarea"></label>
+            <textarea
+                class="new-comment-textarea"
+                id="new-comment-textarea"
+                formControlName="commentContent"
+            >
+            </textarea>
+            <button
+                type="submit"
+                class="submit-btn"
+                [disabled]="newCommentForm.invalid || status() === 'creating'"
+            >
+                {{ status() === 'creating' ? 'posting...' : 'Post comment' }}
+            </button>
+        </form>
+        @for (comment of comments(); track comment.id) {
+            <app-task-comment [thisComment]="comment" />
+        }
+    </div>
+</aside>
