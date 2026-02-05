@@ -25,12 +25,32 @@ $primary-blue: #4a90e2;
             z-index: 10;
 
             h1 {
+                display: inline;
                 margin: 0;
-                font-size: 1.5rem;
+                position: relative;
+                font-size: 2rem;
                 font-weight: 700;
                 color: $text-dark;
-
+                top: 10px;
                 color: $primary-blue;
+            }
+            button {
+                cursor: pointer;
+                background-color: whitesmoke;
+                display: inline;
+                border: 1px solid $primary-blue;
+                border-radius: 5px;
+                font-size: 1.5rem;
+                position: relative;
+                padding: 10px;
+                float: right;
+                margin: 0.5rem;
+            }
+            button:hover {
+                background-color: adjust-color($color: whitesmoke, $lightness: -5%);
+            }
+            button:active {
+                background-color: adjust-color($color: whitesmoke, $lightness: -15%);
             }
         }
 

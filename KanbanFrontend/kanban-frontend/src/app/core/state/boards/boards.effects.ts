@@ -2,7 +2,6 @@ import { inject, Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { BoardsApiService } from '../../services/api/boards';
 import { Store } from '@ngrx/store';
-import { AppState } from '../app.state';
 import { catchError, concatMap, map, mergeMap, of, switchMap } from 'rxjs';
 import { BoardsActions } from './boards.actions';
 import { concatLatestFrom } from '@ngrx/operators';
@@ -19,7 +18,7 @@ import { ColumnsActions } from '../columns/columns.actions';
 @Injectable()
 export class BoardsEffects {
     private actions$ = inject(Actions);
-    private store = inject(Store<AppState>);
+    private store = inject(Store);
     private boardsService = inject(BoardsApiService);
     private toast = inject(ToastService);
 
@@ -191,7 +190,9 @@ export class BoardsEffects {
             switchMap(([{}, user]) =>
                 this.boardsService.getDashboardBoardTiles(user?.id ?? 0).pipe(
                     switchMap((tiles) => {
-                        const usersToUpsert = tiles.map((t) => t.owner);
+                        const usersToUpsert = tiles
+                            .map((t) => t.owner)
+                            .map((x) => ({ ...x, createdAt: new Date(x.createdAt + 'Z') }));
                         const membersToUpsert = tiles.flatMap((t) => t.boardMembers ?? []);
                         tiles = tiles.map((x) => ({
                             ...x,

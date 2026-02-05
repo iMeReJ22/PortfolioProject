@@ -13,8 +13,7 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
             } else if (error.status === 500) {
                 console.error('Internal server error:', error);
             } else if (error.status === 401) {
-                store.dispatch(UsersActions.logout());
-                console.error('Your session ended, please login.');
+                console.error('Invalid credentials. ');
             } else if (error.status === 0) {
                 store.dispatch(UsersActions.logout());
                 console.error('Your session ended, please login.');

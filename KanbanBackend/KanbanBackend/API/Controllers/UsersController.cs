@@ -5,6 +5,7 @@ using KanbanBackend.Application.Users.Commands.UpdateUser;
 using KanbanBackend.Application.Users.Queries.GetUserById;
 using KanbanBackend.Application.Users.Queries.GetUsers;
 using KanbanBackend.Application.Users.Queries.GetUsersByBoard;
+using KanbanBackend.Domain.Exceptions;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -36,8 +37,12 @@ namespace KanbanBackend.API.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> Login(LoginCommand command)
         {
+
             var result = await _mediator.Send(command);
-            return Ok(result);
+            if (result != null)
+                return Ok(result);
+            else
+                return Unauthorized("Invalid email or password.");
         }
 
         [HttpPost("logout")]
@@ -93,6 +98,6 @@ namespace KanbanBackend.API.Controllers
         {
             var result = await _mediator.Send(new GetUsersByBoardQuery(boardId));
             return Ok(result);
-        }                
+        }
     }
 }

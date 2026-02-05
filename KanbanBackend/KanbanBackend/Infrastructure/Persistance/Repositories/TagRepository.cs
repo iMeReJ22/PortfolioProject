@@ -44,7 +44,6 @@ namespace KanbanBackend.Infrastructure.Persistance.Repositories
                 .ToListAsync();
         }
 
-        //removes all associeted tasks from all tags 
         public async SystemTasks.Task RemoveAllTagsForBoardAsync(int boardId)
         {
             var boardTags = await _db.Tags

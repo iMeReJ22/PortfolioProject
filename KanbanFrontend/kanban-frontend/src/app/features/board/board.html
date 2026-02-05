@@ -2,6 +2,8 @@
     <div class="main-board-area">
         <section class="header-section">
             <h1>Board: {{ id() }} Name: {{ thisBoard()?.name }}</h1>
+            <button class="users-btn">👥</button>
+            <button class="activity-btn">ℹ️</button>
         </section>
         <section class="columns-section">
             <div class="columns-grid" cdkDropListGroup>
@@ -39,3 +41,5 @@
 @if (isCreateTaskModalOpen()) {
     <app-task-form-modal [columnId]="createTaskColumnId()" (closeModal)="closeCreateTaskModal()" />
 }
+@if (isActivityDetailsOpen()) {}
+@if (isAddUserModalOpen()) {}

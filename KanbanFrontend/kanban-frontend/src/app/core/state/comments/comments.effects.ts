@@ -1,7 +1,6 @@
 import { inject, Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { CommentsApiService } from '../../services/api/comments';
-import { AppState } from '../app.state';
 import { Store } from '@ngrx/store';
 import { catchError, concatMap, map, of, switchMap } from 'rxjs';
 import { CommentsActions } from './comments.actions';
@@ -11,7 +10,7 @@ import { TaskCommentDto } from '../../models/DTOs/task-comment.model';
 
 export class CommentsEffects {
     private actions$ = inject(Actions);
-    private store = inject(Store<AppState>);
+    private store = inject(Store);
     private commentsService = inject(CommentsApiService);
 
     createComment$ = createEffect(() => {
@@ -60,9 +59,10 @@ export class CommentsEffects {
             concatLatestFrom(({ commentId }) => this.store.select(selectCommentById(commentId))),
             concatMap(([{ commentId, update }, commentBefore]) =>
                 this.commentsService.updateComment(commentId, update).pipe(
-                    map((updatedComment) =>
-                        CommentsActions.updateCommentSuccess({ updatedComment }),
-                    ),
+                    map((updatedComment) => {
+                        updatedComment.createdAt = new Date(updatedComment.createdAt + 'Z');
+                        return CommentsActions.updateCommentSuccess({ updatedComment });
+                    }),
                     catchError((error) =>
                         of(
                             CommentsActions.updateCommentFailure({

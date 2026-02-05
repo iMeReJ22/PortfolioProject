@@ -2,7 +2,6 @@ import { inject, Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { TagsApiService } from '../../services/api/tags';
 import { Store } from '@ngrx/store';
-import { AppState } from '../app.state';
 import { catchError, concatMap, map, mergeMap, of, switchMap } from 'rxjs';
 import { TagsActions } from './tags.actions';
 import { concatLatestFrom } from '@ngrx/operators';
@@ -11,7 +10,7 @@ import { TagDto } from '../../models/DTOs/tag.model';
 
 export class TagsEffects {
     private actions$ = inject(Actions);
-    private store = inject(Store<AppState>);
+    private store = inject(Store);
     private tagsService = inject(TagsApiService);
 
     createTag$ = createEffect(() => {
@@ -19,7 +18,10 @@ export class TagsEffects {
             ofType(TagsActions.createTag),
             mergeMap(({ create, tempId }) =>
                 this.tagsService.createTag(create).pipe(
-                    map((createdTag) => TagsActions.createTagSuccess({ createdTag, tempId })),
+                    map((createdTag) => {
+                        createdTag.createdAt = new Date(createdTag.createdAt + 'Z');
+                        return TagsActions.createTagSuccess({ createdTag, tempId });
+                    }),
                     catchError((error) =>
                         of(TagsActions.createTagFailure({ error: error.message, tempId })),
                     ),
@@ -33,7 +35,10 @@ export class TagsEffects {
             ofType(TagsActions.getTagsForBoard),
             switchMap(({ boardId }) =>
                 this.tagsService.getTagsForBoard(boardId).pipe(
-                    map((tags) => TagsActions.getTagsForBoardSuccess({ tags })),
+                    map((tags) => {
+                        tags = tags.map((x) => ({ ...x, createdAt: new Date(x.createdAt + 'Z') }));
+                        return TagsActions.getTagsForBoardSuccess({ tags });
+                    }),
                     catchError((error) =>
                         of(TagsActions.getTagsForBoardFailure({ error: error.message })),
                     ),
@@ -48,7 +53,10 @@ export class TagsEffects {
             concatLatestFrom(({ update }) => this.store.select(selectTagById(update.id))),
             concatMap(([{ tagId, update }, tagBefore]) =>
                 this.tagsService.updateTag(tagId, update).pipe(
-                    map((updatedTag) => TagsActions.updateTagSuccess({ updatedTag })),
+                    map((updatedTag) => {
+                        updatedTag.createdAt = new Date(updatedTag.createdAt + 'Z');
+                        return TagsActions.updateTagSuccess({ updatedTag });
+                    }),
                     catchError((error) =>
                         of(
                             TagsActions.updateTagFailure({

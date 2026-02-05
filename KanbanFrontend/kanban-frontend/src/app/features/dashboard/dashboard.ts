@@ -25,7 +25,6 @@ export class Dashboard {
     }
     onClickedTile(boardId: number) {
         this.router.navigate(['/board', boardId]);
-        console.log(`Clicked: ${boardId}`);
     }
     onDeleteBoard(boardId: number) {
         this.store.dispatch(BoardsActions.deleteBoard({ boardId }));

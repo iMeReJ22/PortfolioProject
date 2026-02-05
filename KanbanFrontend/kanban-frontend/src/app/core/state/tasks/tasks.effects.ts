@@ -11,14 +11,13 @@ import {
     selectTasksByColumnId,
 } from './tasks.selectors';
 import { concatLatestFrom } from '@ngrx/operators';
-import { AppState } from '../app.state';
 import { TaskDto } from '../../models/DTOs/task.model';
 import { selectAllCommentIdsInTask } from '../comments/comments.selector';
 import { CommentsActions } from '../comments/comments.actions';
 
 export class TasksEffects {
     private actions$ = inject(Actions);
-    private store = inject(Store<AppState>);
+    private store = inject(Store);
     private taskService = inject(TasksApiService);
 
     getTasksForBoard$ = createEffect(() =>
@@ -26,7 +25,13 @@ export class TasksEffects {
             ofType(TasksActions.getTasksForBoard),
             switchMap(({ boardId }) =>
                 this.taskService.getTasksForBoard(boardId).pipe(
-                    map((tasks) => TasksActions.getTasksForBoardSuccess({ tasks })),
+                    map((tasks) => {
+                        tasks = tasks.map((x) => ({
+                            ...x,
+                            createdAt: new Date(x.createdAt + 'Z'),
+                        }));
+                        return TasksActions.getTasksForBoardSuccess({ tasks });
+                    }),
                     catchError((error) =>
                         of(TasksActions.getTasksForBoardFailure({ error: error.message })),
                     ),
@@ -41,7 +46,14 @@ export class TasksEffects {
             concatLatestFrom(({ update }) => this.store.select(selectTaskById(update.taskId))),
             mergeMap(([{ update }, existingTask]) =>
                 this.taskService.updateTask(update.taskId, update).pipe(
-                    map((updatedTask) => TasksActions.updateTaskSuccess({ task: updatedTask })),
+                    map((updatedTask) =>
+                        TasksActions.updateTaskSuccess({
+                            task: {
+                                ...updatedTask,
+                                createdAt: new Date(updatedTask.createdAt + 'Z'),
+                            },
+                        }),
+                    ),
                     catchError((error) =>
                         of(
                             TasksActions.updateTaskFailure({
@@ -60,7 +72,9 @@ export class TasksEffects {
             ofType(TasksActions.createTask),
             concatMap(({ create, tempId }) =>
                 this.taskService.createTask(create).pipe(
-                    map((task) => TasksActions.createTaskSuccess({ task, tempId })),
+                    map((task) => {
+                        return TasksActions.createTaskSuccess({ task, tempId });
+                    }),
                     catchError((error) =>
                         of(
                             TasksActions.createTaskFailure({
@@ -103,7 +117,13 @@ export class TasksEffects {
             concatLatestFrom(() => this.store.select(selectAllTasks)),
             switchMap(([{ columnId }, unloadedTasks]) =>
                 this.taskService.getTasksForColumn(columnId).pipe(
-                    map((tasks) => TasksActions.getTasksForColumnSuccess({ tasks })),
+                    map((tasks) => {
+                        tasks = tasks.map((x) => ({
+                            ...x,
+                            createdAt: new Date(x.createdAt + 'Z'),
+                        }));
+                        return TasksActions.getTasksForColumnSuccess({ tasks });
+                    }),
                     catchError((error) =>
                         of(
                             TasksActions.getTasksForColumnFailure({

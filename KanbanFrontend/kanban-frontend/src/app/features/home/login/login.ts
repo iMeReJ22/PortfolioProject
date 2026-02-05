@@ -24,6 +24,8 @@ export class Login {
     });
 
     onSubmit() {
+        console.log(this.errorMessage());
+
         if (this.loginForm.valid) {
             this.store.dispatch(
                 UsersActions.login({

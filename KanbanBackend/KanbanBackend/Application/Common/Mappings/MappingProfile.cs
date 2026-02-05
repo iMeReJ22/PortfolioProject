@@ -39,7 +39,7 @@ namespace KanbanBackend.Application.Common.Mappings
 
             CreateMap<Board, BoardTileDto>()
                 .ForMember(d => d.Owner, opt => opt.MapFrom(s => s.Owner))
-                .ForMember(d => d.boardMembers, opt => opt.MapFrom(s => s.BoardMembers));
+                .ForMember(d => d.BoardMembers, opt => opt.MapFrom(s => s.BoardMembers));
         }
     }
 }

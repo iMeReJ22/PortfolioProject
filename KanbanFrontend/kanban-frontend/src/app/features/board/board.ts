@@ -75,4 +75,8 @@ export class Board {
     closeTaskDetails() {
         this.isTaskDetailsOpen.set(false);
     }
+
+    isActivityDetailsOpen = signal(false);
+    isUsersDetailsOpen = signal(false);
+    isAddUserModalOpen = signal(false);
 }

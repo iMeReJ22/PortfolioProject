@@ -2,7 +2,6 @@ import { inject, Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { UsersApiService } from '../../services/api/users';
 import { Store } from '@ngrx/store';
-import { AppState } from '../app.state';
 import { catchError, concatMap, exhaustMap, map, mergeMap, of, switchMap, tap } from 'rxjs';
 import { UsersActions } from './users.actions';
 import { selectUserById } from './users.selector';
@@ -13,7 +12,7 @@ import { ToastService } from '../../services/toast/toast.service';
 
 export class UsersEffects {
     private actions$ = inject(Actions);
-    private store = inject(Store<AppState>);
+    private store = inject(Store);
     private userService = inject(UsersApiService);
     private router = inject(Router);
     private toast = inject(ToastService);
@@ -29,6 +28,10 @@ export class UsersEffects {
                             'Account registered successfully! You will be redirected to the login page.',
                         );
                         this.router.navigate(['login']);
+                        createdUser = {
+                            ...createdUser,
+                            createdAt: new Date(createdUser.createdAt + 'Z'),
+                        };
                         return UsersActions.createUserSuccess({ createdUser });
                     }),
                     catchError((error) => {
@@ -70,7 +73,11 @@ export class UsersEffects {
             ofType(UsersActions.getUserById),
             switchMap(({ userId }) =>
                 this.userService.getUserById(userId).pipe(
-                    map((user) => UsersActions.getUserByIdSuccess({ user })),
+                    map((user) =>
+                        UsersActions.getUserByIdSuccess({
+                            user: { ...user, createdAt: new Date(user.createdAt + 'Z') },
+                        }),
+                    ),
                     catchError((error) =>
                         of(UsersActions.getUserByIdFailure({ error: error.message })),
                     ),
@@ -84,7 +91,13 @@ export class UsersEffects {
             ofType(UsersActions.getUsers),
             switchMap(({}) =>
                 this.userService.getUsers().pipe(
-                    map((users) => UsersActions.getUsersSuccess({ users })),
+                    map((users) => {
+                        users = users.map((x) => ({
+                            ...x,
+                            createdAt: new Date(x.createdAt + 'Z'),
+                        }));
+                        return UsersActions.getUsersSuccess({ users });
+                    }),
                     catchError((error) =>
                         of(UsersActions.getUsersFailure({ error: error.message })),
                     ),
@@ -99,7 +112,14 @@ export class UsersEffects {
             concatLatestFrom(({ userId }) => this.store.select(selectUserById(userId))),
             concatMap(([{ userId, update }, oldUser]) =>
                 this.userService.updateUser(userId, update).pipe(
-                    map((updatedUser) => UsersActions.updateUserSuccess({ updatedUser })),
+                    map((updatedUser) =>
+                        UsersActions.updateUserSuccess({
+                            updatedUser: {
+                                ...updatedUser,
+                                createdAt: new Date(updatedUser.createdAt + 'Z'),
+                            },
+                        }),
+                    ),
                     catchError((error) =>
                         of(
                             UsersActions.updateUserFailure({
@@ -138,7 +158,13 @@ export class UsersEffects {
             ofType(UsersActions.getUsersByBoard),
             switchMap(({ boardId }) =>
                 this.userService.getUsersByBoard(boardId).pipe(
-                    map((users) => UsersActions.getUsersByBoardSuccess({ users })),
+                    map((users) => {
+                        users = users.map((x) => ({
+                            ...x,
+                            createdAt: new Date(x.createdAt + 'Z'),
+                        }));
+                        return UsersActions.getUsersByBoardSuccess({ users });
+                    }),
                     catchError((error) =>
                         of(UsersActions.getUsersByBoardFailure({ error: error.message })),
                     ),

@@ -28,15 +28,14 @@ namespace KanbanBackend.Application.Users.Commands.Login
             _mapper = mapper;
         }
 
-        public async Task<LoginResultDto> Handle(LoginCommand request, CancellationToken ct)
+        public async Task<LoginResultDto?> Handle(LoginCommand request, CancellationToken ct)
         {
             var user = await _users.GetByEmailAsync(request.Email);
-            if (user == null)
-                throw new UnauthorizedException("Invalid email or password.");
+            if (user == null) return null;
+
 
             var valid = _hasher.Verify(user.PasswordHash, request.Password);
-            if (!valid)
-                throw new UnauthorizedException("Invalid email or password.");
+            if (!valid) return null;
 
             var token = _auth.GenerateJwtToken(user);
 

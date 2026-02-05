@@ -1,7 +1,6 @@
-import { inject, Injectable } from '@angular/core';
+import { inject } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
-import { AppState } from '../app.state';
 import { ColumnsApiService } from '../../services/api/columns';
 import { catchError, concatMap, map, mergeMap, of, switchMap, tap } from 'rxjs';
 import { ColumnsActions } from './columns.actions';
@@ -12,7 +11,7 @@ import { TasksActions } from '../tasks/tasks.actions';
 
 export class ColumnsEffects {
     private actions$ = inject(Actions);
-    private store = inject(Store<AppState>);
+    private store = inject(Store);
     private columnsService = inject(ColumnsApiService);
 
     createColumn$ = createEffect(() => {
