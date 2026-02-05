@@ -37,7 +37,7 @@ export const taskReducer = createReducer(
 
     on(TasksActions.updateTask, (state, { update }) => ({
         ...state,
-        tasks: state.tasks.map((t) => (t.id === update.taskId ? { ...t, ...update } : t)),
+        tasks: state.tasks.map((t) => (t.id === update.id ? { ...t, ...update } : t)),
         status: 'updating',
     })),
     on(TasksActions.updateTaskSuccess, (state, { task }) => ({

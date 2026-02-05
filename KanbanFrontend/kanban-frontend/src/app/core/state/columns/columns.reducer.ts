@@ -61,9 +61,9 @@ export const columnReducer = createReducer(
         error,
     })),
 
-    on(ColumnsActions.updateColumn, (state, { columnId, request }) => ({
+    on(ColumnsActions.updateColumn, (state, { request }) => ({
         ...state,
-        columns: state.columns.map((c) => (c.id === request.columnId ? { ...c, ...request } : c)),
+        columns: state.columns.map((c) => (c.id === request.id ? { ...c, ...request } : c)),
         status: 'updating',
     })),
     on(ColumnsActions.updateColumnSuccess, (state, { updatedColumn }) => ({

@@ -29,6 +29,11 @@ export class Dashboard {
     onDeleteBoard(boardId: number) {
         this.store.dispatch(BoardsActions.deleteBoard({ boardId }));
     }
+    boardToEdit = signal<number | null>(null);
+    onEditBoard(boardId: number) {
+        this.boardToEdit.set(boardId);
+        this.openCreateBoardModal();
+    }
 
     isModalOpen = signal(false);
     openCreateBoardModal() {
@@ -36,5 +41,6 @@ export class Dashboard {
     }
     closeModal() {
         this.isModalOpen.set(false);
+        this.boardToEdit.set(null);
     }
 }

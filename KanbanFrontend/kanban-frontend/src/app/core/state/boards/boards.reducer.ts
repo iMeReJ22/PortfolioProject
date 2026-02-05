@@ -98,7 +98,7 @@ export const boardReducer = createReducer(
     on(BoardsActions.updateBoard, (state, { update }) => ({
         ...state,
         status: 'updating',
-        boards: state.boards.map((b) => (b.id === update.boardId ? { ...b, ...update } : b)),
+        boards: state.boards.map((b) => (b.id === update.id ? { ...b, ...update } : b)),
     })),
     on(BoardsActions.updateBoardSuccess, (state, { board }) => ({
         ...state,

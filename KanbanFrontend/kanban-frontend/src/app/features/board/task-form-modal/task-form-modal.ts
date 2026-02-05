@@ -16,6 +16,7 @@ export class TaskFormModal {
     private store = inject(Store);
 
     columnId = input.required<number>();
+    taskId = input.required<number | null>();
 
     closeModal = output<void>();
     closeCreateTaskModal() {
@@ -32,18 +33,31 @@ export class TaskFormModal {
     user = this.store.selectSignal(selectLoggedUser);
     taskStatus = this.store.selectSignal(selectTasksStatus);
     onSubmitCreateTask() {
-        this.store.dispatch(
-            TasksActions.createTask({
-                create: {
-                    columnId: this.columnId()!,
-                    title: this.newTaskForm.getRawValue().taskTitle!,
-                    description: this.newTaskForm.getRawValue().taskDescription!,
-                    taskTypeId: Number.parseInt(this.newTaskForm.getRawValue().taskType!),
-                    createdByUserId: this.user()?.id!,
-                },
-                tempId: Date.now(),
-            }),
-        );
+        if (this.taskId() === null) {
+            this.store.dispatch(
+                TasksActions.createTask({
+                    create: {
+                        columnId: this.columnId()!,
+                        title: this.newTaskForm.getRawValue().taskTitle!,
+                        description: this.newTaskForm.getRawValue().taskDescription!,
+                        taskTypeId: Number.parseInt(this.newTaskForm.getRawValue().taskType!),
+                        createdByUserId: this.user()?.id!,
+                    },
+                    tempId: Date.now(),
+                }),
+            );
+        } else {
+            this.store.dispatch(
+                TasksActions.updateTask({
+                    update: {
+                        id: this.taskId()!,
+                        title: this.newTaskForm.getRawValue().taskTitle!,
+                        description: this.newTaskForm.getRawValue().taskDescription!,
+                        taskTypeId: Number.parseInt(this.newTaskForm.getRawValue().taskType!),
+                    },
+                }),
+            );
+        }
         this.closeCreateTaskModal();
     }
 }

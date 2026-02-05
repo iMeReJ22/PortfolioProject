@@ -1,7 +1,7 @@
 <div class="modal-overlay" (click)="closeCreateColumnModal()">
     <div class="modal-content" (click)="$event.stopPropagation()">
         <div class="modal-header">
-            <h3>Create New Board</h3>
+            <h3>{{ columnToEditId() === null ? 'Create New Column' : 'Edit Column' }}</h3>
             <button class="close-btn" (click)="closeCreateColumnModal()">&times;</button>
         </div>
         <form [formGroup]="newColumnForm" (ngSubmit)="onSubmitCreateColumn()">
@@ -26,7 +26,11 @@
                     class="btn-primary"
                     [disabled]="newColumnForm.invalid || columnsStatus() === 'creating'"
                 >
-                    {{ columnsStatus() === 'creating' ? 'Creating...' : 'Create Board' }}
+                    @if (columnToEditId() === null) {
+                        {{ columnsStatus() === 'creating' ? 'Creating...' : 'Create Board' }}
+                    } @else {
+                        {{ columnsStatus() === 'updating' ? 'Updating...' : 'Update Column' }}
+                    }
                 </button>
             </div>
         </form>

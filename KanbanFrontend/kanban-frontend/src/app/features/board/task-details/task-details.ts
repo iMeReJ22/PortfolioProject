@@ -24,6 +24,7 @@ export class TaskDetails {
 
     comments = computed(() => this.store.selectSignal(selectAllCommentsForTask(this.taskId()))());
     loggedUser = this.store.selectSignal(selectLoggedUser);
+    canEdit = input.required<boolean>();
     taskId = input.required<number>();
     thisTask = computed(() => this.store.selectSignal(selectDetailedTask(this.taskId()!))());
     constructor() {
@@ -52,5 +53,18 @@ export class TaskDetails {
     closeTaskDetailsEvent = output<void>();
     closeTaskDetails() {
         this.closeTaskDetailsEvent.emit();
+    }
+
+    deleteTaskEvent = output<number>();
+    onDelete() {
+        const confirmed = window.confirm(
+            `Are you sure you want to delete "${this.thisTask().title}" task?`,
+        );
+        if (confirmed) this.deleteTaskEvent.emit(this.taskId());
+    }
+
+    editTaskEvent = output<{ taskId: number; columnId: number }>();
+    onEdit() {
+        this.editTaskEvent.emit({ taskId: this.taskId(), columnId: this.thisTask().columnId });
     }
 }

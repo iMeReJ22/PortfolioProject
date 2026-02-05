@@ -15,6 +15,7 @@ export class ColumnFormModal {
     private store = inject(Store);
 
     boardId = input.required<number>();
+    columnToEditId = input.required<number | null>();
 
     closeModal = output<void>();
     closeCreateColumnModal() {
@@ -27,15 +28,27 @@ export class ColumnFormModal {
     });
     columnsStatus = this.store.selectSignal(selectColumnsStatus);
     onSubmitCreateColumn() {
-        this.store.dispatch(
-            ColumnsActions.createColumn({
-                request: {
-                    boardId: this.boardId(),
-                    name: this.newColumnForm.getRawValue().columnName!,
-                },
-                tempId: Date.now(),
-            }),
-        );
+        if (this.columnToEditId() === null) {
+            this.store.dispatch(
+                ColumnsActions.createColumn({
+                    request: {
+                        boardId: this.boardId(),
+                        name: this.newColumnForm.getRawValue().columnName!,
+                    },
+                    tempId: Date.now(),
+                }),
+            );
+        } else {
+            this.store.dispatch(
+                ColumnsActions.updateColumn({
+                    columnId: this.columnToEditId()!,
+                    request: {
+                        id: this.columnToEditId()!,
+                        name: this.newColumnForm.getRawValue().columnName!,
+                    },
+                }),
+            );
+        }
         this.closeCreateColumnModal();
     }
 }

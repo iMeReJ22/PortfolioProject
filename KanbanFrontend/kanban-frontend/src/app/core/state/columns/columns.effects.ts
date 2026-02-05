@@ -53,7 +53,7 @@ export class ColumnsEffects {
                         of(
                             ColumnsActions.updateColumnFailure({
                                 error: error.message,
-                                columnBefore: columnBefore ?? ({} as ColumnDto),
+                                columnBefore: columnBefore!,
                             }),
                         ),
                     ),

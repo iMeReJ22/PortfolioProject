@@ -3,7 +3,7 @@ export interface CreateColumnRequest {
     name: string;
 }
 export interface UpdateColumnRequest {
-    columnId: number;
+    id: number;
     name: string;
 }
 export interface ReorderColumnsRequest {

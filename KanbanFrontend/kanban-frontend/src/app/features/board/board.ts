@@ -50,10 +50,17 @@ export class Board {
     }
     closeCreateColumnModal() {
         this.isCreateColumnModalOpen.set(false);
+        this.columnToEditId.set(null);
     }
 
     deleteColumn(columnId: number) {
         this.store.dispatch(ColumnsActions.deleteColumn({ columnId }));
+    }
+
+    columnToEditId = signal<number | null>(null);
+    editColumn(columnId: number) {
+        this.columnToEditId.set(columnId);
+        this.openCreateColumnModal();
     }
 
     isCreateTaskModalOpen = signal(false);
@@ -64,6 +71,7 @@ export class Board {
     }
     closeCreateTaskModal() {
         this.isCreateTaskModalOpen.set(false);
+        this.editTaskId.set(null);
     }
 
     isTaskDetailsOpen = signal(false);
@@ -71,12 +79,48 @@ export class Board {
     openTaskDetails(taskId: number) {
         this.lastClickedTaskId.set(taskId);
         this.isTaskDetailsOpen.set(true);
+        this.closeActivityDetails();
+        this.closeUserDetails();
     }
     closeTaskDetails() {
         this.isTaskDetailsOpen.set(false);
     }
 
+    editTaskId = signal<number | null>(null);
+    editTask(event: { taskId: number; columnId: number }) {
+        this.editTaskId.set(event.taskId);
+        this.openCreateTaskModal(event.columnId);
+    }
+
+    deleteTask(taskId: number) {
+        this.store.dispatch(TasksActions.deleteTask({ taskId }));
+    }
+
     isActivityDetailsOpen = signal(false);
+    openActivityDetails() {
+        this.isActivityDetailsOpen.set(true);
+        this.closeTaskDetails();
+        this.closeUserDetails();
+    }
+    closeActivityDetails() {
+        this.isActivityDetailsOpen.set(false);
+    }
+
     isUsersDetailsOpen = signal(false);
+    openUserDetails() {
+        this.isUsersDetailsOpen.set(true);
+        this.closeTaskDetails();
+        this.closeActivityDetails();
+    }
+    closeUserDetails() {
+        this.isUsersDetailsOpen.set(false);
+    }
+
     isAddUserModalOpen = signal(false);
+    openAddUserModal() {
+        this.isAddUserModalOpen.set(true);
+    }
+    closeAddUserModal() {
+        this.isAddUserModalOpen.set(false);
+    }
 }

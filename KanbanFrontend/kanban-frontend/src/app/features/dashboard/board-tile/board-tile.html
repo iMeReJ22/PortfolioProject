@@ -1,5 +1,6 @@
 <div class="tile-card" (click)="onTileClick()">
     @if (isOwner()) {
+        <button class="edit-btn" (click)="onEdit($event)">✏️</button>
         <button class="delete-btn" (click)="onDelete($event)">🗑️</button>
     }
     <div class="tile-header">

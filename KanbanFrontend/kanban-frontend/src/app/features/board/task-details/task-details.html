@@ -1,6 +1,10 @@
 <aside class="task-details">
     <div class="task-header">
-        <button class="close-detail-btn" (click)="closeTaskDetails()">X</button>
+        <button class="close-detail-btn" (click)="closeTaskDetails()">x</button>
+        @if (canEdit()) {
+            <button class="edit-task-btn" (click)="onEdit()">✏️</button>
+            <button class="delete-task-btn" (click)="onDelete()">🗑️</button>
+        }
         <h2>{{ thisTask().title }}</h2>
         <span class="date">{{ thisTask().createdAt | date: 'dd.MM.yyyy HH:mm' }}</span>
     </div>

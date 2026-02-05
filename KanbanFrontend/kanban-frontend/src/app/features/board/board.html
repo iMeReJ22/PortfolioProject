@@ -14,6 +14,7 @@
                         (openCreateTaskModal)="openCreateTaskModal($event)"
                         (deleteRequest)="deleteColumn($event)"
                         (clickedTileEvent)="openTaskDetails($event)"
+                        (editRequest)="editColumn($event)"
                     />
                 }
                 @if (canEdit()) {
@@ -32,14 +33,25 @@
         <app-task-details
             [taskId]="lastClickedTaskId()"
             (closeTaskDetailsEvent)="closeTaskDetails()"
+            [canEdit]="canEdit()"
+            (editTaskEvent)="editTask($event)"
+            (deleteTaskEvent)="deleteTask($event)"
         />
     }
+    @if (isActivityDetailsOpen()) {}
+    @if (isAddUserModalOpen()) {}
 </div>
 @if (isCreateColumnModalOpen()) {
-    <app-column-form-modal [boardId]="thisBoard()?.id!" (closeModal)="closeCreateColumnModal()" />
+    <app-column-form-modal
+        [boardId]="thisBoard()?.id!"
+        (closeModal)="closeCreateColumnModal()"
+        [columnToEditId]="columnToEditId()"
+    />
 }
 @if (isCreateTaskModalOpen()) {
-    <app-task-form-modal [columnId]="createTaskColumnId()" (closeModal)="closeCreateTaskModal()" />
+    <app-task-form-modal
+        [columnId]="createTaskColumnId()"
+        (closeModal)="closeCreateTaskModal()"
+        [taskId]="editTaskId()"
+    />
 }
-@if (isActivityDetailsOpen()) {}
-@if (isAddUserModalOpen()) {}

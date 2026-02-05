@@ -37,6 +37,12 @@ export class Column {
         );
         if (confirmed) this.deleteRequest.emit(this.thisColumn().id);
     }
+    editRequest = output<number>();
+    onEditColumn(event: Event) {
+        event.stopPropagation();
+        this.editRequest.emit(this.thisColumn().id);
+    }
+
     openCreateTaskModal = output<number>();
     onCreateTask() {
         this.openCreateTaskModal.emit(this.thisColumn().id);

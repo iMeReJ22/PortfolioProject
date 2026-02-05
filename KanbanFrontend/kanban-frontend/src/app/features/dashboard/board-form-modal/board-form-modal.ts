@@ -1,4 +1,4 @@
-import { Component, inject, output } from '@angular/core';
+import { Component, inject, input, output } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Store } from '@ngrx/store';
 import { BoardsActions } from '../../../core/state/boards/boards.actions';
@@ -15,6 +15,8 @@ export class BoardFormModal {
     private store = inject(Store);
     private fb = inject(FormBuilder);
 
+    boardToEdit = input.required<number | null>();
+
     private loggedUser = this.store.selectSignal(selectLoggedUser);
     newBoardForm = this.fb.group({
         boardName: ['', [Validators.required, Validators.minLength(1), Validators.maxLength(100)]],
@@ -23,16 +25,31 @@ export class BoardFormModal {
 
     status = this.store.selectSignal(selectBoardsStatus);
     onSubmit(): void {
-        this.store.dispatch(
-            BoardsActions.createBoard({
-                create: {
-                    name: this.newBoardForm.getRawValue().boardName!,
-                    description: this.newBoardForm.getRawValue().boardDescription!,
-                    ownerId: this.loggedUser()?.id!,
-                },
-                tempId: Date.now(),
-            }),
-        );
+        console.log(this.boardToEdit());
+
+        if (this.boardToEdit() === null) {
+            this.store.dispatch(
+                BoardsActions.createBoard({
+                    create: {
+                        name: this.newBoardForm.getRawValue().boardName!,
+                        description: this.newBoardForm.getRawValue().boardDescription!,
+                        ownerId: this.loggedUser()?.id!,
+                    },
+                    tempId: Date.now(),
+                }),
+            );
+        } else {
+            this.store.dispatch(
+                BoardsActions.updateBoard({
+                    boardId: this.boardToEdit()!,
+                    update: {
+                        id: this.boardToEdit()!,
+                        name: this.newBoardForm.getRawValue().boardName!,
+                        description: this.newBoardForm.getRawValue().boardDescription!,
+                    },
+                }),
+            );
+        }
         this.closeModal();
     }
 

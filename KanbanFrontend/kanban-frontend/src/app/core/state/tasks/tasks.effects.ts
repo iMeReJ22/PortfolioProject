@@ -43,9 +43,9 @@ export class TasksEffects {
     updateTask$ = createEffect(() =>
         this.actions$.pipe(
             ofType(TasksActions.updateTask),
-            concatLatestFrom(({ update }) => this.store.select(selectTaskById(update.taskId))),
+            concatLatestFrom(({ update }) => this.store.select(selectTaskById(update.id))),
             mergeMap(([{ update }, existingTask]) =>
-                this.taskService.updateTask(update.taskId, update).pipe(
+                this.taskService.updateTask(update.id, update).pipe(
                     map((updatedTask) =>
                         TasksActions.updateTaskSuccess({
                             task: {

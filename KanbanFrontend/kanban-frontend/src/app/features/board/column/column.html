@@ -3,6 +3,7 @@
         <h3 class="name-header">{{ thisColumn().name }}</h3>
     </section>
     @if (canEdit()) {
+        <button class="edit-btn" (click)="onEditColumn($event)">✏️</button>
         <button class="delete-btn" (click)="onDeleteColumn($event)">🗑️</button>
     }
     <section class="tasks-section">

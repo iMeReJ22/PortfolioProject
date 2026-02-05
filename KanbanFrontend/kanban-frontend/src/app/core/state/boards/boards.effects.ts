@@ -32,7 +32,6 @@ export class BoardsEffects {
                             'Board Created!',
                             `Successfully created ${create.name}.`,
                         );
-                        created = { ...created, createdAt: new Date(created.createdAt + 'Z') };
                         return BoardsActions.createBoardSuccess({ created, tempId });
                     }),
                     catchError((error) => {
@@ -89,7 +88,7 @@ export class BoardsEffects {
     updateBoard$ = createEffect(() => {
         return this.actions$.pipe(
             ofType(BoardsActions.updateBoard),
-            concatLatestFrom(({ update }) => this.store.select(selectBoardById(update.boardId))),
+            concatLatestFrom(({ update }) => this.store.select(selectBoardById(update.id))),
             mergeMap(([{ boardId, update }, boardBefore]) =>
                 this.boardsService.updateBoard(boardId, update).pipe(
                     map((board) => {

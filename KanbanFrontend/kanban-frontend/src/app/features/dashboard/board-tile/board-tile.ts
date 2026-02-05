@@ -24,4 +24,9 @@ export class BoardTile {
         );
         if (confirmed) this.deleteRequest.emit(this.boardTile().id);
     }
+    editRequest = output<number>();
+    onEdit(event: Event) {
+        event.stopPropagation();
+        this.editRequest.emit(this.boardTile().id);
+    }
 }

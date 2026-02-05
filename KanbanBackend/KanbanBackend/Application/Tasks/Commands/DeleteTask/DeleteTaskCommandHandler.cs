@@ -26,9 +26,9 @@ namespace KanbanBackend.Application.Tasks.Commands.DeleteTask
             if (task == null)
                 throw new NotFoundException("Board", request.Id);
 
-            await _recursive.HandleTasksAsync([task]);
-
             await _logger.AddLogTaskAsync("Task Removed", "removed from", task.Id);
+
+            await _recursive.HandleTasksAsync([task]);
 
             return Unit.Value;
         }

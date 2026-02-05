@@ -18,7 +18,7 @@ export interface DeleteBoardRequest {
     boardId: number;
 }
 export interface UpdateBoardRequest {
-    boardId: number;
+    id: number;
     name?: string;
     description?: string;
 }
