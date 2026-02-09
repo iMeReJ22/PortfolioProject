@@ -4,6 +4,7 @@ import { Store } from '@ngrx/store';
 import { TasksActions } from '../../../core/state/tasks/tasks.actions';
 import { selectLoggedUser } from '../../../core/state/users/users.selector';
 import { selectTaskTypesDict, selectTasksStatus } from '../../../core/state/tasks/tasks.selectors';
+import { TaskDto } from '../../../core/models/DTOs/task.model';
 
 @Component({
     selector: 'app-task-form-modal',
@@ -16,7 +17,7 @@ export class TaskFormModal {
     private store = inject(Store);
 
     columnId = input.required<number>();
-    taskId = input.required<number | null>();
+    task = input.required<TaskDto | null>();
 
     closeModal = output<void>();
     closeCreateTaskModal() {
@@ -30,10 +31,21 @@ export class TaskFormModal {
         taskType: ['', [Validators.required]],
         taskDescription: ['', [Validators.required]],
     });
+
+    constructor() {
+        effect(() => {
+            this.newTaskForm.patchValue({
+                taskTitle: this.task()?.title,
+                taskDescription: this.task()?.description,
+                taskType: this.task()?.taskTypeId.toString(),
+            });
+        });
+    }
+
     user = this.store.selectSignal(selectLoggedUser);
     taskStatus = this.store.selectSignal(selectTasksStatus);
     onSubmitCreateTask() {
-        if (this.taskId() === null) {
+        if (this.task() === null) {
             this.store.dispatch(
                 TasksActions.createTask({
                     create: {
@@ -50,7 +62,7 @@ export class TaskFormModal {
             this.store.dispatch(
                 TasksActions.updateTask({
                     update: {
-                        id: this.taskId()!,
+                        id: this.task()?.id!,
                         title: this.newTaskForm.getRawValue().taskTitle!,
                         description: this.newTaskForm.getRawValue().taskDescription!,
                         taskTypeId: Number.parseInt(this.newTaskForm.getRawValue().taskType!),

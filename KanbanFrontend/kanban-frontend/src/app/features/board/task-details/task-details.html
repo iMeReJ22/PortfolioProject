@@ -5,7 +5,7 @@
             <button class="edit-task-btn" (click)="onEdit()">✏️</button>
             <button class="delete-task-btn" (click)="onDelete()">🗑️</button>
         }
-        <h2>{{ thisTask().title }}</h2>
+        <h2 [ngStyle]="{ 'background-color': thisTask().type.colorHex }">{{ thisTask().title }}</h2>
         <span class="date">{{ thisTask().createdAt | date: 'dd.MM.yyyy HH:mm' }}</span>
     </div>
     <div class="task-tags">

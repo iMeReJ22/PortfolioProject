@@ -3,7 +3,7 @@ import { UserDto } from './user.model';
 export interface BoardMemberDto {
     userId: number;
     boardId: number;
-    role: 'owner' | 'member' | 'guest' | 'Owner';
+    role: 'owner' | 'member' | 'guest';
 }
 
 export function compareRoles(a: BoardMemberDto, b: BoardMemberDto) {

@@ -1,1 +1,31 @@
-<p>user-details works!</p>
+<aside class="user-details">
+    <div class="users-header">
+        <button class="close-details-btn" (click)="closeUserDetails()">x</button>
+        @if (isOwner()) {
+            <button class="add-user-btn" (click)="onAddUser()">+👤</button>
+        }
+        <h2>Board Users</h2>
+    </div>
+    <div class="users-body">
+        <section class="owner-section">
+            <h3>Owner</h3>
+            <app-single-user [thisUser]="ownerUser()[0]" />
+        </section>
+        <section class="members-section">
+            @if (memberUsers().length > 0) {
+                <h3>Members</h3>
+                @for (member of memberUsers(); track $index) {
+                    <app-single-user [thisUser]="member" />
+                }
+            }
+        </section>
+        <section class="guest-section">
+            @if (guestUsers().length > 0) {
+                <h3>Guests</h3>
+                @for (guest of guestUsers(); track $index) {
+                    <app-single-user [thisUser]="guest" />
+                }
+            }
+        </section>
+    </div>
+</aside>

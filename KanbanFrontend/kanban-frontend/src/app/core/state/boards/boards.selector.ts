@@ -1,8 +1,10 @@
 import { createFeatureSelector, createSelector } from '@ngrx/store';
 import { BoardState } from './boards.reducer';
-import { selectUsersState } from '../users/users.selector';
+import { selectAllUsers, selectUsersState } from '../users/users.selector';
 import { UserState } from '../users/users.reducer';
 import { BoardTileDto } from '../../models/DTOs/board.model';
+import { BoardMemberDto } from '../../models/DTOs/board-member.models';
+import { UserDto } from '../../models/DTOs/user.model';
 
 export const selectBoardState = createFeatureSelector<BoardState>('boards');
 
@@ -33,9 +35,25 @@ export const selectBoardsStatus = createSelector(
     (state: BoardState) => state.status,
 );
 
-export const selectBoardMembersByRole = (role: 'owner' | 'guest' | 'member') =>
+export const selectBoardMembersByRoleInCurrentBoard = (role: 'owner' | 'guest' | 'member') =>
     createSelector(selectBoardState, (state: BoardState) =>
-        state.boardMembers.filter((bm) => bm.role === role),
+        state.boardMembers.filter(
+            (bm) => bm.role === role && bm.boardId === state.currentBoard?.id,
+        ),
+    );
+
+export const selectUsersByRoleInCurrentBoard = (role: 'owner' | 'guest' | 'member') =>
+    createSelector(
+        selectBoardMembersByRoleInCurrentBoard(role),
+        selectAllUsers,
+        (boardMembers, users) => {
+            const resultUsers: UserDto[] = [];
+            boardMembers.forEach((boardMember) => {
+                const match = users.find((u) => u.id === boardMember.userId);
+                if (match) resultUsers.push({ ...match, role: boardMember.role });
+            });
+            return resultUsers;
+        },
     );
 
 export const selectTilesByRole = (role: 'owner' | 'guest' | 'member') =>

@@ -37,7 +37,7 @@ namespace KanbanBackend.Application.Boards.Commands.CreateBoard
 
             await _boards.AddAsync(board);
             await _logger.AddLogBoardAsync("Board Created", "created", id);
-            await _boards.AddMemberAsync(new BoardMember { BoardId = board.Id, UserId = board.OwnerId, Role = "Owner" });
+            await _boards.AddMemberAsync(new BoardMember { BoardId = board.Id, UserId = board.OwnerId, Role = "owner" });
             return _mapper.Map<BoardDto>(board);
         }
         

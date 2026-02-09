@@ -11,6 +11,10 @@ import { ColumnFormModal } from './column-form-modal/column-form-modal';
 import { TaskFormModal } from './task-form-modal/task-form-modal';
 import { TaskDetails } from './task-details/task-details';
 import { DragDropModule } from '@angular/cdk/drag-drop';
+import { ActivityLogs } from './activity-logs/activity-logs';
+import { UserDetails } from './user-details/user-details';
+import { UserFormModal } from './user-form-modal/user-form-modal';
+import { TaskDto } from '../../core/models/DTOs/task.model';
 
 @Component({
     selector: 'app-board',
@@ -23,6 +27,9 @@ import { DragDropModule } from '@angular/cdk/drag-drop';
         TaskFormModal,
         TaskDetails,
         DragDropModule,
+        ActivityLogs,
+        UserDetails,
+        UserFormModal,
     ],
 })
 export class Board {
@@ -71,7 +78,7 @@ export class Board {
     }
     closeCreateTaskModal() {
         this.isCreateTaskModalOpen.set(false);
-        this.editTaskId.set(null);
+        this.editTask.set(null);
     }
 
     isTaskDetailsOpen = signal(false);
@@ -86,13 +93,13 @@ export class Board {
         this.isTaskDetailsOpen.set(false);
     }
 
-    editTaskId = signal<number | null>(null);
-    editTask(event: { taskId: number; columnId: number }) {
-        this.editTaskId.set(event.taskId);
+    editTask = signal<TaskDto | null>(null);
+    onEditTask(event: TaskDto) {
+        this.editTask.set(event);
         this.openCreateTaskModal(event.columnId);
     }
 
-    deleteTask(taskId: number) {
+    onDeleteTask(taskId: number) {
         this.store.dispatch(TasksActions.deleteTask({ taskId }));
     }
 

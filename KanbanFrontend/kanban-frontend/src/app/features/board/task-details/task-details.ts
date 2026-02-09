@@ -10,11 +10,12 @@ import {
     selectCommentsStatus,
 } from '../../../core/state/comments/comments.selector';
 import { selectLoggedUser } from '../../../core/state/users/users.selector';
-import { DatePipe } from '@angular/common';
+import { DatePipe, NgStyle } from '@angular/common';
+import { TaskDto } from '../../../core/models/DTOs/task.model';
 
 @Component({
     selector: 'app-task-details',
-    imports: [Tag, TaskComment, ReactiveFormsModule, DatePipe],
+    imports: [Tag, TaskComment, ReactiveFormsModule, DatePipe, NgStyle],
     templateUrl: './task-details.html',
     styleUrl: './task-details.scss',
 })
@@ -63,8 +64,8 @@ export class TaskDetails {
         if (confirmed) this.deleteTaskEvent.emit(this.taskId());
     }
 
-    editTaskEvent = output<{ taskId: number; columnId: number }>();
+    editTaskEvent = output<TaskDto>();
     onEdit() {
-        this.editTaskEvent.emit({ taskId: this.taskId(), columnId: this.thisTask().columnId });
+        this.editTaskEvent.emit(this.thisTask());
     }
 }

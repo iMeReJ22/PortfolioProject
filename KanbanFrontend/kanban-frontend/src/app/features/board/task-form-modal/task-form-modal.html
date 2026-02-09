@@ -1,7 +1,7 @@
 <div class="modal-overlay" (click)="closeCreateTaskModal()">
     <div class="modal-content" (click)="$event.stopPropagation()">
         <div class="modal-header">
-            <h3>{{ taskId() === null ? 'Create New Task' : 'Edit Task' }}</h3>
+            <h3>{{ task() === null ? 'Create New Task' : 'Edit Task' }}</h3>
             <button class="close-btn" (click)="closeCreateTaskModal()">&times;</button>
         </div>
         <form [formGroup]="newTaskForm" (ngSubmit)="onSubmitCreateTask()">
@@ -18,7 +18,7 @@
                     <label for="task-type">Task Type</label>
                     <select id="task-type" formControlName="taskType" class="form-control">
                         @for (item of taskTypesDict(); track item.at(0)) {
-                            <option [value]="item[0]">
+                            <option [value]="item[0]" [style.color]="item[1].colorHex">
                                 {{ item[1].name }}
                             </option>
                         }
@@ -41,7 +41,7 @@
                     class="btn-primary"
                     [disabled]="newTaskForm.invalid || taskStatus() === 'creating'"
                 >
-                    @if (taskId() === null) {
+                    @if (task() === null) {
                         {{ taskStatus() === 'creating' ? 'Creating...' : 'Create Task' }}
                     } @else {
                         {{ taskStatus() === 'updating' ? 'Updating...' : 'Update Task' }}

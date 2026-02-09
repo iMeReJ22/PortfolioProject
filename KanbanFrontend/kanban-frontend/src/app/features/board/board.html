@@ -2,8 +2,20 @@
     <div class="main-board-area">
         <section class="header-section">
             <h1>Board: {{ id() }} Name: {{ thisBoard()?.name }}</h1>
-            <button class="users-btn">👥</button>
-            <button class="activity-btn">ℹ️</button>
+            <button
+                class="users-btn"
+                (click)="openUserDetails()"
+                (closeUserDetailsEvent)="closeUserDetails()"
+            >
+                👥
+            </button>
+            <button
+                class="activity-btn"
+                (click)="openActivityDetails()"
+                (closeActivityDetailsEvent)="closeActivityDetails()"
+            >
+                ℹ️
+            </button>
         </section>
         <section class="columns-section">
             <div class="columns-grid" cdkDropListGroup>
@@ -34,12 +46,19 @@
             [taskId]="lastClickedTaskId()"
             (closeTaskDetailsEvent)="closeTaskDetails()"
             [canEdit]="canEdit()"
-            (editTaskEvent)="editTask($event)"
-            (deleteTaskEvent)="deleteTask($event)"
+            (editTaskEvent)="onEditTask($event)"
+            (deleteTaskEvent)="onDeleteTask($event)"
         />
     }
-    @if (isActivityDetailsOpen()) {}
-    @if (isAddUserModalOpen()) {}
+    @if (isActivityDetailsOpen()) {
+        <app-activity-logs />
+    }
+    @if (isUsersDetailsOpen()) {
+        <app-user-details
+            [thisUserRole]="thisUserRole()"
+            (closeUserDetailsEvent)="closeUserDetails()"
+        />
+    }
 </div>
 @if (isCreateColumnModalOpen()) {
     <app-column-form-modal
@@ -52,6 +71,9 @@
     <app-task-form-modal
         [columnId]="createTaskColumnId()"
         (closeModal)="closeCreateTaskModal()"
-        [taskId]="editTaskId()"
+        [task]="editTask()"
     />
+}
+@if (isAddUserModalOpen()) {
+    <app-user-form-modal />
 }

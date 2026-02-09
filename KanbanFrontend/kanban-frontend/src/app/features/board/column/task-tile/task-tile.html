@@ -1,4 +1,4 @@
-<div class="task-tile" (click)="onTileClick()">
+<div class="task-tile" (click)="onTileClick()" [ngStyle]="{ 'border-color': typeColor() }">
     <div class="task-header">
         <h6>{{ thisTask().title }}</h6>
         <div class="tags">
@@ -11,6 +11,7 @@
         <p>{{ thisTask().description }}</p>
     </div>
     <div class="task-footer">
+        <span class="type" [ngStyle]="{ color: typeColor() }">{{ thisTask().type.name }}</span>
         <span class="date">{{ thisTask().createdAt | date: 'shortDate' }}</span>
     </div>
 </div>

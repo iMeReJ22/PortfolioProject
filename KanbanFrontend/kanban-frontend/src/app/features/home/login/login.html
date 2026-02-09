@@ -21,7 +21,11 @@
         </div>
 
         @if (errorMessage()) {
-            <div class="alert-error">{{ errorMessage() }}</div>
+            <div class="alert-error">
+                {{
+                    errorMessage()?.includes('401') ? 'Incorrect Email or Password' : errorMessage()
+                }}
+            </div>
         }
 
         <button type="submit" [disabled]="loginForm.invalid || status() === 'loading'">

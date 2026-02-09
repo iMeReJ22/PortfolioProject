@@ -12,7 +12,6 @@ $border-light: #edf2f7;
     height: 100%;
     z-index: 100;
     box-shadow: -5px 0 15px rgba(0, 0, 0, 0.05);
-    animation: slideIn 0.3s ease-out;
 
     .task-header {
         position: relative;
@@ -74,7 +73,6 @@ $border-light: #edf2f7;
             color: $text-main;
             padding: 0.5rem 0rem 0.5rem 1rem;
             border-radius: 1rem 0 0 1rem;
-            background-color: lightblue;
         }
 
         .date {
@@ -169,16 +167,5 @@ $border-light: #edf2f7;
                 }
             }
         }
-    }
-}
-
-@keyframes slideIn {
-    from {
-        transform: translateX(100%);
-        opacity: 0;
-    }
-    to {
-        transform: translate(0);
-        opacity: 1;
     }
 }

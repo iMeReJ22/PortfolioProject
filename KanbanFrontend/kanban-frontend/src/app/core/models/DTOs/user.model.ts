@@ -2,6 +2,6 @@ export interface UserDto {
     id: number;
     email: string;
     displayName: string;
-    role?: 'owner' | 'user' | 'guest';
+    role?: 'owner' | 'member' | 'guest';
     createdAt: Date;
 }
